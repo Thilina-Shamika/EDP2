@@ -2,17 +2,45 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [counts, setCounts] = useState({ buy: 0, commercial: 0, offplan: 0 });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/auth/signin');
     }
   }, [status, router]);
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      setLoading(true);
+      try {
+        const [buyRes, commercialRes, offplanRes] = await Promise.all([
+          fetch("/api/properties?type=buy"),
+          fetch("/api/properties?type=commercial"),
+          fetch("/api/properties?type=off-plan"),
+        ]);
+        if (!buyRes.ok || !commercialRes.ok || !offplanRes.ok) throw new Error("Failed to fetch property counts");
+        const [buy, commercial, offplan] = await Promise.all([
+          buyRes.json(),
+          commercialRes.json(),
+          offplanRes.json(),
+        ]);
+        setCounts({ buy: buy.length, commercial: commercial.length, offplan: offplan.length });
+      } catch {
+        setError("Failed to load property counts");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCounts();
+  }, []);
 
   if (status === 'loading') {
     return (
@@ -58,6 +86,22 @@ export default function AdminDashboard() {
           <p className="text-gray-600">No recent activity</p>
         </div>
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center">
+          <span className="text-lg font-semibold mb-2" style={{ color: '#495565' }}>Buy Properties</span>
+          <span className="text-3xl font-bold" style={{ color: '#101728' }}>{loading ? '...' : counts.buy}</span>
+        </div>
+        <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center">
+          <span className="text-lg font-semibold mb-2" style={{ color: '#495565' }}>Commercial Properties</span>
+          <span className="text-3xl font-bold" style={{ color: '#101728' }}>{loading ? '...' : counts.commercial}</span>
+        </div>
+        <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center">
+          <span className="text-lg font-semibold mb-2" style={{ color: '#495565' }}>Off Plan Properties</span>
+          <span className="text-3xl font-bold" style={{ color: '#101728' }}>{loading ? '...' : counts.offplan}</span>
+        </div>
+      </div>
+      {error && <div className="text-red-500 mb-4">{error}</div>}
     </div>
   );
 } 

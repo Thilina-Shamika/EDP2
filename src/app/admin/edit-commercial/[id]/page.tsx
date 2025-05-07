@@ -2,6 +2,7 @@
 
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from 'next/image';
 
 const PROPERTY_TYPE_OPTIONS = [
   'Retail', 'Warehouse', 'Industrial', 'Shop', 'Office', 'Restaurant', 'Hotel', 'Mixed Use',
@@ -63,34 +64,10 @@ export default function EditCommercialProperty() {
     }
   };
 
-  const handleRemoveImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-  };
-
   const handleQrCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setQrCode(e.target.files[0]);
     }
-  };
-
-  const handleRemoveExistingImage = (imgUrl: string) => {
-    setProperty((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        images: prev.images.filter((url: string) => url !== imgUrl)
-      };
-    });
-  };
-
-  const handleRemoveQrCode = () => {
-    setProperty((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        qrCode: undefined
-      };
-    });
   };
 
   // Cloudinary upload helper
@@ -272,15 +249,16 @@ export default function EditCommercialProperty() {
             </div>
             {/* Existing QR Code Preview */}
             {property.qrCode && !qrCode && (
-              <div className="relative w-24 h-24 mt-4 border rounded overflow-hidden group">
-                <img
+              <div className="relative w-24 h-24">
+                <Image
                   src={property.qrCode}
                   alt="QR Code"
-                  className="object-cover w-full h-full"
+                  fill
+                  className="object-contain"
                 />
                 <button
                   type="button"
-                  onClick={handleRemoveQrCode}
+                  onClick={() => setProperty(prev => prev && ({ ...prev, qrCode: undefined }))}
                   className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible"
                   title="Remove QR code"
                 >
@@ -290,20 +268,13 @@ export default function EditCommercialProperty() {
             )}
             {/* New QR Code Preview */}
             {qrCode && (
-              <div className="relative w-24 h-24 mt-4 border rounded overflow-hidden group">
-                <img
+              <div className="relative w-24 h-24">
+                <Image
                   src={URL.createObjectURL(qrCode)}
                   alt={qrCode.name}
-                  className="object-cover w-full h-full"
+                  fill
+                  className="object-contain"
                 />
-                <button
-                  type="button"
-                  onClick={handleRemoveQrCode}
-                  className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible"
-                  title="Remove QR code"
-                >
-                  &times;
-                </button>
               </div>
             )}
           </div>
@@ -314,16 +285,17 @@ export default function EditCommercialProperty() {
           {/* Existing Images */}
           {property.images && property.images.length > 0 && (
             <div className="flex flex-wrap gap-4 mb-4">
-              {property.images.map((img, idx) => (
-                <div key={idx} className="relative w-24 h-24 border rounded overflow-hidden group">
-                  <img
-                    src={img}
-                    alt={`Property ${idx + 1}`}
-                    className="object-cover w-full h-full"
+              {property.images.map((image, index) => (
+                <div key={index} className="relative w-24 h-24">
+                  <Image
+                    src={image}
+                    alt={`Property image ${index + 1}`}
+                    fill
+                    className="object-cover rounded-md"
                   />
                   <button
                     type="button"
-                    onClick={() => handleRemoveExistingImage(img)}
+                    onClick={() => setProperty(prev => prev && ({ ...prev, images: prev.images.filter((url: string) => url !== image) }))}
                     className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible"
                     title="Remove image"
                   >
@@ -343,21 +315,14 @@ export default function EditCommercialProperty() {
           {/* New Image Previews */}
           {images.length > 0 && (
             <div className="flex flex-wrap gap-4 mt-4">
-              {images.map((img, idx) => (
-                <div key={idx} className="relative w-24 h-24 border rounded overflow-hidden group">
-                  <img
-                    src={URL.createObjectURL(img)}
-                    alt={img.name}
-                    className="object-cover w-full h-full"
+              {images.map((image, index) => (
+                <div key={index} className="relative w-24 h-24">
+                  <Image
+                    src={URL.createObjectURL(image)}
+                    alt={`Image Preview ${index + 1}`}
+                    fill
+                    className="object-cover rounded-md"
                   />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(idx)}
-                    className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible"
-                    title="Remove image"
-                  >
-                    &times;
-                  </button>
                 </div>
               ))}
             </div>

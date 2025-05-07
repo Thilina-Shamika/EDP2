@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from 'next/image';
 
 interface Property {
   _id: string;
@@ -99,7 +100,13 @@ export default function ManageCommercial() {
                   <td className="py-2 px-4 align-middle">
                     {p.images && p.images.length > 0 ? (
                       <div className="flex items-center justify-center h-16">
-                        <img src={p.images[0]} alt="Property" className="w-16 h-16 object-cover rounded" />
+                        <Image
+                          src={p.images[0]}
+                          alt={p.title}
+                          width={50}
+                          height={50}
+                          className="h-12 w-12 object-cover rounded"
+                        />
                       </div>
                     ) : (
                       <span className="text-gray-400">-</span>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from 'next/image';
 
 const PROPERTY_TYPE_OPTIONS = [
   "Apartment", "Villa", "Townhouse", "Penthouse", "Duplex", "Studio", "Loft", "Plot", "Other"
@@ -243,8 +244,21 @@ export default function AddOffPlan() {
             </div>
             {qrCode && (
               <div className="relative w-24 h-24 mt-4 border rounded overflow-hidden group">
-                <img src={URL.createObjectURL(qrCode)} alt={qrCode.name} className="object-cover w-full h-full" />
-                <button type="button" onClick={handleRemoveQrCode} className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible" title="Remove QR code">&times;</button>
+                <Image
+                  src={URL.createObjectURL(qrCode)}
+                  alt={qrCode.name}
+                  width={96}
+                  height={96}
+                  className="object-cover w-full h-full"
+                />
+                <button
+                  type="button"
+                  onClick={handleRemoveQrCode}
+                  className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible"
+                  title="Remove QR code"
+                >
+                  &times;
+                </button>
               </div>
             )}
           </div>
@@ -262,8 +276,21 @@ export default function AddOffPlan() {
             <div className="flex flex-wrap gap-4 mt-4">
               {images.map((img, idx) => (
                 <div key={idx} className="relative w-24 h-24 border rounded overflow-hidden group">
-                  <img src={URL.createObjectURL(img)} alt={img.name} className="object-cover w-full h-full" />
-                  <button type="button" onClick={() => handleRemoveImage(idx)} className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible" title="Remove image">&times;</button>
+                  <Image
+                    src={URL.createObjectURL(img)}
+                    alt={img.name}
+                    width={96}
+                    height={96}
+                    className="object-cover w-full h-full"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(idx)}
+                    className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible"
+                    title="Remove image"
+                  >
+                    &times;
+                  </button>
                 </div>
               ))}
             </div>

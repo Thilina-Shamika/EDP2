@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Image from 'next/image';
 
 const PROPERTY_TYPE_OPTIONS = [
   'Apartment', 'Villa', 'Townhouse', 'Penthouse', 'Duplex', 'Studio', 'Loft',
@@ -250,9 +251,11 @@ export default function AddBuyProperty() {
             {/* QR Code Preview */}
             {qrCode && (
               <div className="relative w-24 h-24 mt-4 border rounded overflow-hidden group">
-                <img
+                <Image
                   src={URL.createObjectURL(qrCode)}
                   alt={qrCode.name}
+                  width={96}
+                  height={96}
                   className="object-cover w-full h-full"
                 />
                 <button
@@ -281,9 +284,11 @@ export default function AddBuyProperty() {
             <div className="flex flex-wrap gap-4 mt-4">
               {images.map((img, idx) => (
                 <div key={idx} className="relative w-24 h-24 border rounded overflow-hidden group">
-                  <img
+                  <Image
                     src={URL.createObjectURL(img)}
                     alt={img.name}
+                    width={96}
+                    height={96}
                     className="object-cover w-full h-full"
                   />
                   <button

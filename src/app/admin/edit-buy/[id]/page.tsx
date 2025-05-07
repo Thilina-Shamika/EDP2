@@ -2,6 +2,7 @@
 
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 const PROPERTY_TYPE_OPTIONS = [
   'Apartment', 'Villa', 'Townhouse', 'Penthouse', 'Duplex', 'Studio', 'Loft',
@@ -40,10 +41,9 @@ interface Property {
 
 export default function EditBuyProperty() {
   const router = useRouter();
-  const params = useParams();
-  const id = Array.isArray(params.id) ? params.id[0] : params.id;
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
+  const { id } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [property, setProperty] = useState<Property | null>(null);
   const [images, setImages] = useState<File[]>([]);
   const [qrCode, setQrCode] = useState<File | null>(null);
@@ -54,7 +54,7 @@ export default function EditBuyProperty() {
       try {
         const res = await fetch(`/api/properties/${id}`);
         if (!res.ok) throw new Error('Failed to fetch property');
-        const data: Property = await res.json();
+        const data = await res.json();
         setProperty(data);
       } catch (err: unknown) {
         if (err instanceof Error) setError(err.message);
@@ -84,21 +84,11 @@ export default function EditBuyProperty() {
   };
 
   const handleRemoveExistingImage = (imgUrl: string) => {
-    setProperty((prev) => {
+    setProperty((prev: Property | null) => {
       if (!prev) return null;
       return {
         ...prev,
         images: prev.images.filter((url: string) => url !== imgUrl)
-      };
-    });
-  };
-
-  const handleRemoveQrCode = () => {
-    setProperty((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        qrCode: undefined
       };
     });
   };
@@ -241,8 +231,8 @@ export default function EditBuyProperty() {
       }
       router.push('/admin/manage-buy');
       router.refresh();
-    } catch {
-      setError('An error occurred');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -355,15 +345,16 @@ export default function EditBuyProperty() {
             </div>
             {/* Existing QR Code Preview */}
             {property?.qrCode && !qrCode && (
-              <div className="relative w-24 h-24 mt-4 border rounded overflow-hidden group">
-                <img
+              <div className="relative w-24 h-24">
+                <Image
                   src={property.qrCode}
                   alt="QR Code"
-                  className="object-cover w-full h-full"
+                  fill
+                  className="object-contain"
                 />
                 <button
                   type="button"
-                  onClick={handleRemoveQrCode}
+                  onClick={() => setProperty(prev => prev && ({ ...prev, qrCode: undefined }))}
                   className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible"
                   title="Remove QR code"
                 >
@@ -373,20 +364,13 @@ export default function EditBuyProperty() {
             )}
             {/* New QR Code Preview */}
             {qrCode && (
-              <div className="relative w-24 h-24 mt-4 border rounded overflow-hidden group">
-                <img
+              <div className="relative w-24 h-24">
+                <Image
                   src={URL.createObjectURL(qrCode)}
                   alt={qrCode.name}
-                  className="object-cover w-full h-full"
+                  fill
+                  className="object-contain"
                 />
-                <button
-                  type="button"
-                  onClick={handleRemoveQrCode}
-                  className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible"
-                  title="Remove QR code"
-                >
-                  &times;
-                </button>
               </div>
             )}
           </div>
@@ -403,16 +387,17 @@ export default function EditBuyProperty() {
           {/* Existing Image Previews */}
           {property.images && property.images.length > 0 && (
             <div className="flex flex-wrap gap-4 mt-4">
-              {property.images.map((img: string, idx: number) => (
-                <div key={idx} className="relative w-24 h-24 border rounded overflow-hidden group">
-                  <img
-                    src={img}
-                    alt={`Property image ${idx + 1}`}
-                    className="object-cover w-full h-full"
+              {property.images.map((image: string, index: number) => (
+                <div key={index} className="relative w-24 h-24">
+                  <Image
+                    src={image}
+                    alt={`Property image ${index + 1}`}
+                    fill
+                    className="object-cover rounded-md"
                   />
                   <button
                     type="button"
-                    onClick={() => handleRemoveExistingImage(img)}
+                    onClick={() => handleRemoveExistingImage(image)}
                     className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible"
                     title="Remove image"
                   >
@@ -426,11 +411,12 @@ export default function EditBuyProperty() {
           {images.length > 0 && (
             <div className="flex flex-wrap gap-4 mt-4">
               {images.map((img, idx) => (
-                <div key={idx} className="relative w-24 h-24 border rounded overflow-hidden group">
-                  <img
+                <div key={idx} className="relative w-24 h-24">
+                  <Image
                     src={URL.createObjectURL(img)}
                     alt={img.name}
-                    className="object-cover w-full h-full"
+                    fill
+                    className="object-cover rounded-md"
                   />
                   <button
                     type="button"
