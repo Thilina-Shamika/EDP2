@@ -1,44 +1,90 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const PROPERTY_TYPE_OPTIONS = [
   "Apartment", "Villa", "Townhouse", "Penthouse", "Duplex", "Studio", "Loft", "Plot", "Other"
 ];
 
-export default function AddOffPlan() {
+interface Property {
+  _id: string;
+  title: string;
+  description: string;
+  type: string;
+  propertyCategory?: string;
+  price: number;
+  location: string;
+  area: number;
+  images: string[];
+  status: string;
+  reference?: string;
+  zoneName?: string;
+  dldPermit?: string;
+  qrCode?: string;
+  pdf?: string;
+}
+
+export default function EditOffPlanProperty() {
   const router = useRouter();
-  // Key Info
+  const params = useParams();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [property, setProperty] = useState<Property | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+  const [qrCode, setQrCode] = useState<File | null>(null);
+  const [pdf, setPdf] = useState<File | null>(null);
+
+  // Form fields
   const [propertyType, setPropertyType] = useState("");
   const [beds, setBeds] = useState("");
   const [price, setPrice] = useState("");
   const [installment1, setInstallment1] = useState("");
   const [installment2, setInstallment2] = useState("");
   const [handoverDate, setHandoverDate] = useState("");
-  // Developer Info
   const [masterDeveloper, setMasterDeveloper] = useState("");
   const [projectName, setProjectName] = useState("");
-  // About Project
   const [description, setDescription] = useState("");
-  // Location
   const [locationDetails, setLocationDetails] = useState("");
-  // Regulatory
   const [reference, setReference] = useState("");
   const [dldPermit, setDldPermit] = useState("");
-  const [qrCode, setQrCode] = useState<File | null>(null);
-  // Images
-  const [images, setImages] = useState<File[]>([]);
-  // PDF
-  const [pdf, setPdf] = useState<File | null>(null);
-  // UI
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  // Add new state for area and zoneName
   const [area, setArea] = useState("");
   const [zoneName, setZoneName] = useState("");
 
-  // Handlers
+  useEffect(() => {
+    const fetchProperty = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/properties/${id}`);
+        if (!res.ok) throw new Error('Failed to fetch property');
+        const data = await res.json();
+        setProperty(data);
+        // Pre-fill form fields
+        setPropertyType(data.propertyCategory || "");
+        setProjectName(data.title || "");
+        setDescription(data.description || "");
+        setPrice(data.price?.toString() || "");
+        setArea(data.area?.toString() || "");
+        setLocationDetails(data.location || "");
+        setReference(data.reference || "");
+        setZoneName(data.zoneName || "");
+        setDldPermit(data.dldPermit || "");
+        // Optionally set other fields if you add them to the model
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProperty();
+  }, [id]);
+
+  // Handlers for file/image changes
   const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
@@ -48,14 +94,35 @@ export default function AddOffPlan() {
   const handleRemoveImage = (idx: number) => {
     setImages(prev => prev.filter((_, i) => i !== idx));
   };
+  const handleRemoveExistingImage = (imgUrl: string) => {
+    setProperty((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        images: prev.images.filter((url: string) => url !== imgUrl)
+      };
+    });
+  };
   const handleQrCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) setQrCode(e.target.files[0]);
   };
   const handleRemoveQrCode = () => setQrCode(null);
+  const handleRemoveExistingQrCode = () => {
+    setProperty((prev) => {
+      if (!prev) return null;
+      return { ...prev, qrCode: undefined };
+    });
+  };
   const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) setPdf(e.target.files[0]);
   };
   const handleRemovePdf = () => setPdf(null);
+  const handleRemoveExistingPdf = () => {
+    setProperty((prev) => {
+      if (!prev) return null;
+      return { ...prev, pdf: undefined };
+    });
+  };
 
   // Cloudinary upload helpers
   const uploadImagesToCloudinary = async (files: File[], resourceType = "image") => {
@@ -92,29 +159,25 @@ export default function AddOffPlan() {
     if (!zoneName) { setError("Zone Name is required."); setLoading(false); return; }
     // Upload images
     let imageUrls: string[] = [];
-    let qrCodeUrl = "";
-    let pdfUrl = "";
+    let qrCodeUrl = property?.qrCode || "";
+    let pdfUrl = property?.pdf || "";
     try {
       if (images.length > 0) imageUrls = await uploadImagesToCloudinary(images);
       if (qrCode) {
         const qrArr = await uploadImagesToCloudinary([qrCode]);
-        qrCodeUrl = qrArr[0] || "";
+        qrCodeUrl = qrArr[0] || qrCodeUrl;
       }
       if (pdf) {
         const pdfArr = await uploadImagesToCloudinary([pdf], "raw");
-        pdfUrl = pdfArr[0] || "";
-        console.log('PDF Upload URL:', pdfUrl);
-        if (!pdfUrl) {
-          setError("PDF upload failed. Please try again.");
-          setLoading(false);
-          return;
-        }
+        pdfUrl = pdfArr[0] || pdfUrl;
       }
     } catch {
       setError("File upload failed. Please try again.");
       setLoading(false);
       return;
     }
+    // Merge with existing images
+    const allImages = [...(property?.images || []), ...imageUrls];
     // Build data
     const data = {
       title: projectName,
@@ -128,17 +191,16 @@ export default function AddOffPlan() {
       zoneName,
       dldPermit,
       qrCode: qrCodeUrl,
-      images: imageUrls,
-      pdf: pdfUrl || "",
+      images: allImages,
+      pdf: pdfUrl,
     };
-    console.log('Submitting property data:', data);
     try {
-      const res = await fetch("/api/properties", {
-        method: "POST",
+      const res = await fetch(`/api/properties/${id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error("Failed to add property");
+      if (!res.ok) throw new Error("Failed to update property");
       router.push("/admin/manage-off-plan");
       router.refresh();
     } catch (err) {
@@ -148,11 +210,14 @@ export default function AddOffPlan() {
     }
   };
 
+  if (loading) return <div className="p-8">Loading...</div>;
+  if (error) return <div className="p-8 text-red-500">{error}</div>;
+  if (!property) return null;
+
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6" style={{ color: '#495565' }}>Add Off Plan Properties</h1>
+      <h1 className="text-2xl font-bold mb-6" style={{ color: '#495565' }}>Edit Off Plan Property</h1>
       <form onSubmit={handleSubmit} className="space-y-8">
-        {error && <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm" style={{ color: '#101728' }}>{error}</div>}
         {/* Key Information */}
         <div className="bg-white rounded-lg p-8 shadow">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Key Information</h2>
@@ -165,42 +230,20 @@ export default function AddOffPlan() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Number of Beds</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={beds} onChange={e => setBeds(e.target.value)} />
-            </div>
-            <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Price (AED)</label>
               <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="number" value={price} onChange={e => setPrice(e.target.value)} required />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Installment 1</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={installment1} onChange={e => setInstallment1(e.target.value)} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Installment 2</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={installment2} onChange={e => setInstallment2(e.target.value)} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Handover Date</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" placeholder="e.g., Q4 2025" value={handoverDate} onChange={e => setHandoverDate(e.target.value)} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Square Feet</label>
               <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="number" value={area} onChange={e => setArea(e.target.value)} required />
             </div>
-          </div>
-        </div>
-        {/* Developer Information */}
-        <div className="bg-white rounded-lg p-8 shadow">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Developer Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Master Developer</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={masterDeveloper} onChange={e => setMasterDeveloper(e.target.value)} />
-            </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Project Name</label>
               <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={projectName} onChange={e => setProjectName(e.target.value)} required />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-900 mb-1">Location Details</label>
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={locationDetails} onChange={e => setLocationDetails(e.target.value)} required />
             </div>
           </div>
         </div>
@@ -209,12 +252,6 @@ export default function AddOffPlan() {
           <h2 className="text-lg font-semibold text-gray-900 mb-2">About Project</h2>
           <label className="block text-sm font-medium text-gray-900 mb-1">Project Description</label>
           <textarea className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" rows={4} value={description} onChange={e => setDescription(e.target.value)} required />
-        </div>
-        {/* Location */}
-        <div className="bg-white rounded-lg p-8 shadow">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Location</h2>
-          <label className="block text-sm font-medium text-gray-900 mb-1">Location Details</label>
-          <textarea className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" rows={3} value={locationDetails} onChange={e => setLocationDetails(e.target.value)} required />
         </div>
         {/* Regulatory Information */}
         <div className="bg-white rounded-lg p-8 shadow">
@@ -241,6 +278,14 @@ export default function AddOffPlan() {
                 <span className="text-gray-400 text-sm">Drag and drop QR code image here, or click to select</span>
               </label>
             </div>
+            {/* Existing QR Code Preview */}
+            {property.qrCode && !qrCode && (
+              <div className="relative w-24 h-24 mt-4 border rounded overflow-hidden group">
+                <img src={property.qrCode} alt="QR Code" className="object-cover w-full h-full" />
+                <button type="button" onClick={handleRemoveExistingQrCode} className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible" title="Remove QR code">&times;</button>
+              </div>
+            )}
+            {/* New QR Code Preview */}
             {qrCode && (
               <div className="relative w-24 h-24 mt-4 border rounded overflow-hidden group">
                 <img src={URL.createObjectURL(qrCode)} alt={qrCode.name} className="object-cover w-full h-full" />
@@ -252,12 +297,25 @@ export default function AddOffPlan() {
         {/* Property Images */}
         <div className="bg-white rounded-lg p-8 shadow">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Property Images</h2>
-          <div className="border-2 border-dashed border-gray-300 rounded-md p-4 flex flex-col items-center justify-center cursor-pointer mb-4">
+          {/* Existing Images */}
+          {property.images && property.images.length > 0 && (
+            <div className="flex flex-wrap gap-4 mb-4">
+              {property.images.map((img, idx) => (
+                <div key={idx} className="relative w-24 h-24 border rounded overflow-hidden group">
+                  <img src={img} alt={`Property ${idx + 1}`} className="object-cover w-full h-full" />
+                  <button type="button" onClick={() => handleRemoveExistingImage(img)} className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible" title="Remove image">&times;</button>
+                </div>
+              ))}
+            </div>
+          )}
+          {/* New Images Upload */}
+          <div className="border-2 border-dashed border-gray-300 rounded-md p-4 flex flex-col items-center justify-center cursor-pointer">
             <input type="file" id="images" accept="image/*" multiple className="hidden" onChange={handleImagesChange} />
             <label htmlFor="images" className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
               <span className="text-gray-400 text-sm">Drag and drop property images here, or click to select</span>
             </label>
           </div>
+          {/* New Image Previews */}
           {images.length > 0 && (
             <div className="flex flex-wrap gap-4 mt-4">
               {images.map((img, idx) => (
@@ -278,6 +336,14 @@ export default function AddOffPlan() {
               <span className="text-gray-400 text-sm">Drag and drop PDF here, or click to select</span>
             </label>
           </div>
+          {/* Existing PDF */}
+          {property.pdf && !pdf && (
+            <div className="flex items-center gap-2 mt-2">
+              <a href={property.pdf} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm">View PDF</a>
+              <button type="button" onClick={handleRemoveExistingPdf} className="text-red-500 hover:underline text-xs">Remove</button>
+            </div>
+          )}
+          {/* New PDF */}
           {pdf && (
             <div className="flex items-center gap-2 mt-2">
               <span className="text-gray-700 text-sm">{pdf.name}</span>
@@ -288,7 +354,7 @@ export default function AddOffPlan() {
         {/* Submit Button */}
         <div className="flex justify-end">
           <button type="submit" disabled={loading} className="rounded-full bg-black text-white px-8 py-2 font-semibold text-lg shadow hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50">
-            {loading ? "Adding..." : "Add Property"}
+            {loading ? "Saving..." : "Update Property"}
           </button>
         </div>
       </form>

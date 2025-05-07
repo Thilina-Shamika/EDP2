@@ -18,6 +18,7 @@ export interface IProperty extends mongoose.Document {
   zoneName: string;
   dldPermit: string;
   qrCode?: string;
+  pdf?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -90,6 +91,9 @@ const propertySchema = new mongoose.Schema({
     required: [true, 'Please provide a DLD permit number'],
   },
   qrCode: {
+    type: String,
+  },
+  pdf: {
     type: String,
   },
 }, {
