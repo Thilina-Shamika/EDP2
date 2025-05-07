@@ -1,0 +1,47 @@
+{
+  "name": "newedprop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "create-admin": "ts-node --project tsconfig.json src/scripts/create-admin.ts"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "^2.9.0",
+    "@prisma/client": "^6.7.0",
+    "@types/bcryptjs": "^3.0.0",
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^16.5.0",
+    "lucide-react": "^0.507.0",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.14.1",
+    "next": "15.3.2",
+    "next-auth": "^4.24.11",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.21",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.2",
+    "postcss": "^8.5.3",
+    "tailwind-merge": "^3.2.0",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "ts-node": "^10.9.2"
+  }
+}
