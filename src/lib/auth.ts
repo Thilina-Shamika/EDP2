@@ -41,19 +41,21 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        (token as Record<string, unknown>).role = (user as { role?: string }).role;
+        token.id = user.id;
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
-        ((session.user as unknown) as Record<string, unknown>).role = (token as Record<string, unknown>).role;
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
       }
       return session;
     }
   },
   pages: {
-    signIn: '/sign-in',
+    signIn: '/auth/signin',
   },
   session: {
     strategy: 'jwt',

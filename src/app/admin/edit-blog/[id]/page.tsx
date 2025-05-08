@@ -1,26 +1,71 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from 'next/image';
 
-export default function AddBlog() {
+interface Blog {
+  _id: string;
+  title: string;
+  content: string;
+  image: string;
+  tags: string[];
+  published: boolean;
+  subHeading?: string;
+  excerpt?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string;
+  authorName?: string;
+}
+
+export default function EditBlog({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const { data: session } = useSession();
+  const [blog, setBlog] = useState<Blog | null>(null);
   const [title, setTitle] = useState("");
   const [subHeading, setSubHeading] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [article, setArticle] = useState("");
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
+  const [currentImage, setCurrentImage] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [metaKeywords, setMetaKeywords] = useState("");
   const [authorName, setAuthorName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const res = await fetch(`/api/blogs/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch blog");
+        const data = await res.json();
+        setBlog(data);
+        setTitle(data.title);
+        setSubHeading(data.subHeading || "");
+        setExcerpt(data.excerpt || "");
+        setArticle(data.content);
+        setCurrentImage(data.image);
+        setTags(data.tags || []);
+        setMetaTitle(data.metaTitle || "");
+        setMetaDescription(data.metaDescription || "");
+        setMetaKeywords(data.metaKeywords || "");
+        setAuthorName(data.authorName || "");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load blog");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBlog();
+  }, [id]);
 
   // Handle tags as chips
   const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -57,38 +102,39 @@ export default function AddBlog() {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
 
-  // Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setSaving(true);
 
     if (!session?.user?.id) {
-      setError("You must be logged in to add a blog post");
-      setLoading(false);
+      setError("You must be logged in to edit a blog post");
+      setSaving(false);
       return;
     }
 
-    if (!title) { setError("Title is required."); setLoading(false); return; }
-    if (!article) { setError("Article is required."); setLoading(false); return; }
-    if (!featuredImage) { setError("Featured image is required."); setLoading(false); return; }
-    if (!authorName) { setError("Author name is required."); setLoading(false); return; }
+    if (!title) { setError("Title is required."); setSaving(false); return; }
+    if (!article) { setError("Article is required."); setSaving(false); return; }
+    if (!authorName) { setError("Author name is required."); setSaving(false); return; }
 
-    let imageUrl = "";
-    try {
-      imageUrl = await uploadImageToCloudinary(featuredImage);
-    } catch {
-      setError("Image upload failed. Please try again.");
-      setLoading(false);
-      return;
+    let imageUrl = currentImage;
+    if (featuredImage) {
+      try {
+        imageUrl = await uploadImageToCloudinary(featuredImage);
+      } catch {
+        setError("Image upload failed. Please try again.");
+        setSaving(false);
+        return;
+      }
     }
+
     const slug = slugify(title);
     const data = {
       title,
       subHeading,
       excerpt,
-      article,
-      featuredImage: imageUrl,
+      content: article,
+      image: imageUrl,
       tags,
       metaTitle,
       metaDescription,
@@ -96,9 +142,10 @@ export default function AddBlog() {
       slug,
       authorName,
     };
+
     try {
-      const res = await fetch("/api/blogs", {
-        method: "POST",
+      const res = await fetch(`/api/blogs/${id}`, {
+        method: "PUT",
         headers: { 
           "Content-Type": "application/json"
         },
@@ -107,20 +154,24 @@ export default function AddBlog() {
       });
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to add blog post");
+        throw new Error(errorData.message || "Failed to update blog post");
       }
       router.push("/admin/manage-blog");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
+  if (loading) return <div className="p-8">Loading...</div>;
+  if (error) return <div className="p-8 text-red-500">{error}</div>;
+  if (!blog) return null;
+
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6" style={{ color: '#495565' }}>Add Blog Post</h1>
+      <h1 className="text-2xl font-bold mb-6" style={{ color: '#495565' }}>Edit Blog Post</h1>
       <form onSubmit={handleSubmit} className="space-y-8">
         {error && <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm">{error}</div>}
         <div className="bg-white rounded-lg p-8 shadow space-y-6">
@@ -147,19 +198,22 @@ export default function AddBlog() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Featured Image</label>
-              <input type="file" accept="image/*" className="mt-1 block w-full" onChange={e => setFeaturedImage(e.target.files?.[0] || null)} required />
-              {featuredImage && (
+              <input type="file" accept="image/*" className="mt-1 block w-full" onChange={e => setFeaturedImage(e.target.files?.[0] || null)} />
+              {(featuredImage || currentImage) && (
                 <div className="relative w-24 h-24 mt-4 border rounded overflow-hidden group">
                   <Image
-                    src={URL.createObjectURL(featuredImage)}
-                    alt={featuredImage.name}
+                    src={featuredImage ? URL.createObjectURL(featuredImage) : currentImage}
+                    alt="Featured image"
                     width={96}
                     height={96}
                     className="object-cover w-full h-full"
                   />
                   <button
                     type="button"
-                    onClick={() => setFeaturedImage(null)}
+                    onClick={() => {
+                      setFeaturedImage(null);
+                      setCurrentImage("");
+                    }}
                     className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible"
                     title="Remove image"
                   >
@@ -204,8 +258,8 @@ export default function AddBlog() {
             </div>
           </div>
           <div className="flex justify-end">
-            <button type="submit" disabled={loading} className="rounded-full bg-black text-white px-8 py-2 font-semibold text-lg shadow hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50">
-              {loading ? "Adding..." : "Add Blog Post"}
+            <button type="submit" disabled={saving} className="rounded-full bg-black text-white px-8 py-2 font-semibold text-lg shadow hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50">
+              {saving ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </div>

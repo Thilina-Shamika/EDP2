@@ -2,14 +2,12 @@ import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 export default withAuth(
-  function middleware(req) {
-    console.log("Middleware running for:", req.nextUrl.pathname);
+  function middleware() {
     return NextResponse.next();
   },
   {
     callbacks: {
       authorized: ({ token }) => {
-        console.log("Middleware authorized check:", token);
         return !!token;
       },
     },
@@ -17,5 +15,9 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/api/blogs/:path*",
+    "/api/properties/:path*"
+  ],
 }; 

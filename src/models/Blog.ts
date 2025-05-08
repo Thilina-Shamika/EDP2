@@ -10,6 +10,12 @@ export interface IBlog extends mongoose.Document {
   published: boolean;
   createdAt: Date;
   updatedAt: Date;
+  authorName: string;
+  subHeading?: string;
+  excerpt?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string;
 }
 
 const blogSchema = new mongoose.Schema({
@@ -30,6 +36,30 @@ const blogSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'Please provide an author'],
+  },
+  authorName: {
+    type: String,
+    required: [true, 'Please provide an author name'],
+  },
+  subHeading: {
+    type: String,
+    default: '',
+  },
+  excerpt: {
+    type: String,
+    default: '',
+  },
+  metaTitle: {
+    type: String,
+    default: '',
+  },
+  metaDescription: {
+    type: String,
+    default: '',
+  },
+  metaKeywords: {
+    type: String,
+    default: '',
   },
   image: {
     type: String,
