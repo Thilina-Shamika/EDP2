@@ -61,6 +61,14 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   const url = new URL(request.url);
   const id = url.pathname.split("/").pop();
+  
+  if (!id) {
+    return NextResponse.json(
+      { message: "Blog ID is required" },
+      { status: 400 }
+    );
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -71,13 +79,30 @@ export async function DELETE(request: Request) {
     }
 
     await dbConnect();
-    const blog = await Blog.findById(id);
+    
+    // First check if the blog exists
+    const blog = await Blog.findOne({ _id: id });
     if (!blog) {
-      return NextResponse.json({ message: "Blog not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Blog not found" },
+        { status: 404 }
+      );
     }
 
-    await Blog.findByIdAndDelete(id);
-    return NextResponse.json({ message: "Blog deleted successfully" });
+    // Delete the specific blog by ID
+    const deleteResult = await Blog.deleteOne({ _id: id });
+    
+    if (deleteResult.deletedCount === 0) {
+      return NextResponse.json(
+        { message: "Failed to delete blog" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Blog deleted successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error deleting blog:", error);
     return NextResponse.json(

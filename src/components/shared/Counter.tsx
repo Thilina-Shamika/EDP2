@@ -5,19 +5,19 @@ import { useInView } from 'react-intersection-observer';
 
 const counterData = [
   {
-    number: 2500,
+    number: 100,
     label: 'listings for sale'
   },
   {
-    number: 1350,
+    number: 50,
     label: 'listings for rent'
   },
   {
-    number: 900,
+    number: 10,
     label: 'property sold'
   },
   {
-    number: 15,
+    number: 40,
     label: 'off plan'
   }
 ];

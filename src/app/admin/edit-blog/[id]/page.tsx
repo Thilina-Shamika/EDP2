@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from 'next/image';
+import RichTextEditor from '@/components/shared/RichTextEditor';
 
 interface Blog {
   _id: string;
@@ -194,7 +195,7 @@ export default function EditBlog() {
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-900 mb-1">Article</label>
-              <textarea className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" rows={8} value={article} onChange={e => setArticle(e.target.value)} required />
+              <RichTextEditor content={article} onChange={setArticle} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Featured Image</label>
