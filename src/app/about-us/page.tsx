@@ -1,14 +1,32 @@
+import Header from '@/components/shared/Header';
+import Footer from '@/components/shared/Footer';
+
 export default function AboutUs() {
   return (
-    <main className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">About Us</h1>
-        <div className="prose max-w-none">
-          <p className="text-lg text-gray-600">
-            Welcome to EDProp, your trusted partner in real estate solutions. We are dedicated to providing exceptional service and expertise in the real estate market.
-          </p>
+    <>
+      <Header />
+      <main className="min-h-screen bg-white py-24 flex flex-col items-center justify-center">
+        {/* About Us Pill */}
+
+        <div className="flex justify-center mb-6">
+          <span className="inline-block bg-gray-100 text-gray-800 px-4 py-2 rounded-full text-sm font-medium">
+            About Us
+          </span>
         </div>
-      </div>
-    </main>
+
+         {/* Main Heading */}
+         <h1 className="text-3xl mb-5 md:text-4xl font-bold text-center text-gray-900">
+          Elite Destination Property (EDP)
+        </h1>
+
+
+        {/* Subtitle */}
+        <p className="text-center text-lg text-gray-700 max-w-2xl mb-8">
+          Trust and relationships are at the heart of our story. It all started when our founders Abdul Basir Qayumi and Mirwais Jahanbaz shared a clear vision: put our investors first and build lasting partnerships through genuine understanding of our market.
+        </p>
+       
+      </main>
+      <Footer />
+    </>
   );
 } 
