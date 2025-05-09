@@ -108,7 +108,7 @@ export default function ListPropertyPage() {
                 </label>
                 <PhoneInput
                   international
-                  defaultCountry="AE"
+                  defaultCountry="GB"
                   value={formData.mobile}
                   onChange={value => setFormData(prev => ({ ...prev, mobile: value || '' }))}
                   className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
@@ -26,14 +26,11 @@ interface OffPlanProperty {
   features?: string[];
   pdf?: string;
   qrCode?: string;
-  // The following fields may not exist in DB, but keep for UI compatibility
-  developer?: string;
+  installment1?: string;
+  installment2?: string;
   handoverDate?: string;
+  masterDeveloper?: string;
   beds?: string;
-  paymentPlan?: {
-    installment1?: string;
-    installment2?: string;
-  };
 }
 
 export default function OffPlanPropertyClient() {
@@ -44,6 +41,11 @@ export default function OffPlanPropertyClient() {
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const [formError, setFormError] = useState('');
+  const [formLoading, setFormLoading] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchProperty() {
@@ -51,7 +53,9 @@ export default function OffPlanPropertyClient() {
         setIsLoading(true);
         const response = await fetch(`/api/properties/${id}`);
         if (!response.ok) throw new Error('Failed to fetch property');
-        setProperty(await response.json());
+        const data = await response.json();
+        setProperty(data);
+        console.log('Fetched property:', data);
       } catch (err) {
         setError('Failed to load property. Please try again later.');
       } finally {
@@ -62,6 +66,40 @@ export default function OffPlanPropertyClient() {
   }, [id]);
 
   const getAllImages = () => property?.images?.map((src) => ({ src: src || '/placeholder.jpg' })) || [];
+
+  // Modal form handlers
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError('');
+    if (!form.name || !form.email || !form.phone) {
+      setFormError('Please fill all fields.');
+      return;
+    }
+    setFormLoading(true);
+    try {
+      const res = await fetch('/api/brochure-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          propertyTitle: property?.title || '',
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to submit request');
+      // Open PDF in new tab
+      if (property?.pdf) window.open(property.pdf, '_blank');
+      setShowModal(false);
+      setForm({ name: '', email: '', phone: '' });
+    } catch (err) {
+      setFormError('Submission failed. Please try again.');
+    } finally {
+      setFormLoading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -82,6 +120,59 @@ export default function OffPlanPropertyClient() {
   return (
     <main className="min-h-screen bg-white">
       <Header transparent={false} />
+      {/* Modal Popup */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div ref={modalRef} className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative animate-fadeIn">
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl"
+              onClick={() => setShowModal(false)}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <h2 className="text-2xl font-bold text-center mb-2">Download Brochure</h2>
+            <p className="text-center text-gray-600 mb-6">To download the brochure, please submit your WhatsApp number or Email address.</p>
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <input
+                type="text"
+                name="name"
+                placeholder="Your Name"
+                value={form.name}
+                onChange={handleFormChange}
+                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={form.email}
+                onChange={handleFormChange}
+                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <input
+                type="tel"
+                name="phone"
+                placeholder="WhatsApp Number"
+                value={form.phone}
+                onChange={handleFormChange}
+                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              {formError && <div className="text-red-500 text-sm text-center">{formError}</div>}
+              <button
+                type="submit"
+                className="w-full bg-blue-900 text-white py-3 rounded-full flex items-center justify-center gap-2 text-lg font-semibold hover:bg-blue-800 transition-colors"
+                disabled={formLoading}
+              >
+                {formLoading ? 'Submitting...' : 'Download Brochure'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
       <div className="container mx-auto px-4 pt-24 pb-16 max-w-[1200px]">
         {/* Back Button */}
         <button
@@ -119,7 +210,11 @@ export default function OffPlanPropertyClient() {
               <button className="px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800 transition-colors text-center font-medium">
                 Register your interest
               </button>
-              <button className="px-6 py-3 bg-white text-black border-2 border-black rounded-full hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 font-medium">
+              <button
+                className="px-6 py-3 bg-white text-black border-2 border-black rounded-full hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 font-medium"
+                onClick={() => setShowModal(true)}
+                disabled={!property.pdf}
+              >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
@@ -182,11 +277,11 @@ export default function OffPlanPropertyClient() {
                 </div>
                 <div>
                   <p className="text-gray-600 mb-1">Installment 1</p>
-                  <p className="text-xl font-semibold">{property.paymentPlan?.installment1 || '-'}</p>
+                  <p className="text-xl font-semibold">{property.installment1 || '-'}</p>
                 </div>
                 <div>
                   <p className="text-gray-600 mb-1">Installment 2</p>
-                  <p className="text-xl font-semibold">{property.paymentPlan?.installment2 || '-'}</p>
+                  <p className="text-xl font-semibold">{property.installment2 || '-'}</p>
                 </div>
                 <div>
                   <p className="text-gray-600 mb-1">Handover Date</p>
@@ -206,7 +301,7 @@ export default function OffPlanPropertyClient() {
             <div className="grid grid-cols-2 gap-6">
               <div className="bg-white rounded-[20px] p-6 border border-gray-100">
                 <div className="text-[15px] text-gray-500 mb-2">Master Developer</div>
-                <div className="text-[15px] font-medium">{property.developer || '-'}</div>
+                <div className="text-[15px] font-medium">{property.masterDeveloper || '-'}</div>
               </div>
               <div className="bg-white rounded-[20px] p-6 border border-gray-100">
                 <div className="text-[15px] text-gray-500 mb-2">Project Name</div>
@@ -229,9 +324,8 @@ export default function OffPlanPropertyClient() {
                   <div className="bg-gray-50 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
                     <span className="text-gray-900 font-medium">1</span>
                   </div>
-                  <div className="text-gray-500 text-sm mb-2">INSTALLMENT_1</div>
-                  <div className="text-[40px] font-semibold mb-2">50</div>
-                  <div className="text-gray-500">During Construction</div>
+                  <div className="text-gray-500 text-sm mb-2">Installment 1</div>
+                  <div className="text-[20px] font-semibold mb-2">{property.installment1 || '-'}</div>
                 </div>
                 {/* Installment 2 */}
                 <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col items-start">
@@ -239,8 +333,7 @@ export default function OffPlanPropertyClient() {
                     <span className="text-gray-900 font-medium">2</span>
                   </div>
                   <div className="text-gray-500 text-sm mb-2">Installment 2</div>
-                  <div className="text-[40px] font-semibold mb-2">50</div>
-                  <div className="text-gray-500">On Handover</div>
+                  <div className="text-[20px] font-semibold mb-2">{property.installment2 || '-'}</div>
                 </div>
               </div>
             </div>

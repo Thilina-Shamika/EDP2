@@ -19,6 +19,10 @@ export interface IProperty extends mongoose.Document {
   dldPermit: string;
   qrCode?: string;
   pdf?: string;
+  installment1?: string;
+  installment2?: string;
+  handoverDate?: string;
+  masterDeveloper?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -94,6 +98,18 @@ const propertySchema = new mongoose.Schema({
     type: String,
   },
   pdf: {
+    type: String,
+  },
+  installment1: {
+    type: String,
+  },
+  installment2: {
+    type: String,
+  },
+  handoverDate: {
+    type: String,
+  },
+  masterDeveloper: {
     type: String,
   },
 }, {

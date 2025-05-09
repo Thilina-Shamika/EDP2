@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import mongoose from 'mongoose';
+import { ObjectId } from 'mongodb';
 
 const MortgageApprovalSchema = new mongoose.Schema({
   name: String,
@@ -72,5 +73,33 @@ export async function POST(request: Request) {
       },
       { status: 500 }
     );
+  }
+}
+
+export async function GET() {
+  try {
+    await connectDB();
+    const approvals = await MortgageApproval.find({}).sort({ createdAt: -1 });
+    return NextResponse.json(approvals);
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to fetch mortgage approvals' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    await connectDB();
+    const url = new URL(request.url);
+    const id = url.searchParams.get('id');
+    if (!id) {
+      return NextResponse.json({ error: 'Missing id' }, { status: 400 });
+    }
+    const result = await MortgageApproval.deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 0) {
+      return NextResponse.json({ error: 'Mortgage approval not found' }, { status: 404 });
+    }
+    return NextResponse.json({ message: 'Mortgage approval deleted successfully' });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to delete mortgage approval' }, { status: 500 });
   }
 } 

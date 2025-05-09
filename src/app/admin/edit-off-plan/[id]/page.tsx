@@ -24,6 +24,10 @@ interface Property {
   dldPermit?: string;
   qrCode?: string;
   pdf?: string;
+  installment1?: string;
+  installment2?: string;
+  handoverDate?: string;
+  masterDeveloper?: string;
 }
 
 export default function EditOffPlanProperty() {
@@ -47,40 +51,51 @@ export default function EditOffPlanProperty() {
   const [dldPermit, setDldPermit] = useState("");
   const [area, setArea] = useState("");
   const [zoneName, setZoneName] = useState("");
+  const [installment1, setInstallment1] = useState("");
+  const [installment2, setInstallment2] = useState("");
+  const [handoverDate, setHandoverDate] = useState("");
+  const [masterDeveloper, setMasterDeveloper] = useState("");
+
+  // Add state for removed images, QR code, and PDF
+  const [removedImageIndexes, setRemovedImageIndexes] = useState<number[]>([]);
+  const [removeQrCode, setRemoveQrCode] = useState(false);
+  const [removePdf, setRemovePdf] = useState(false);
 
   useEffect(() => {
     const fetchProperty = async () => {
-      setLoading(true);
       try {
-        const res = await fetch(`/api/properties/${id}`);
-        if (!res.ok) throw new Error('Failed to fetch property');
-        const data = await res.json();
+        const response = await fetch(`/api/properties/${id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch property');
+        }
+        const data = await response.json();
         setProperty(data);
-        // Pre-fill form fields
         setPropertyType(data.propertyCategory || "");
+        setPrice(data.price?.toString() || "");
         setProjectName(data.title || "");
         setDescription(data.description || "");
-        setPrice(data.price?.toString() || "");
-        setArea(data.area?.toString() || "");
         setLocationDetails(data.location || "");
         setReference(data.reference || "");
-        setZoneName(data.zoneName || "");
         setDldPermit(data.dldPermit || "");
-        // Optionally set other fields if you add them to the model
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('An unknown error occurred');
-        }
+        setArea(data.area?.toString() || "");
+        setZoneName(data.zoneName || "");
+        setInstallment1(data.installment1 || "");
+        setInstallment2(data.installment2 || "");
+        setHandoverDate(data.handoverDate || "");
+        setMasterDeveloper(data.masterDeveloper || "");
+      } catch (error) {
+        setError('Failed to load property');
       } finally {
         setLoading(false);
       }
     };
-    fetchProperty();
+
+    if (id) {
+      fetchProperty();
+    }
   }, [id]);
 
-  // Handlers for file/image changes
+  // Handlers
   const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
@@ -90,52 +105,49 @@ export default function EditOffPlanProperty() {
   const handleRemoveImage = (idx: number) => {
     setImages(prev => prev.filter((_, i) => i !== idx));
   };
-  const handleRemoveExistingImage = (imgUrl: string) => {
-    setProperty((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        images: prev.images.filter((url: string) => url !== imgUrl)
-      };
-    });
-  };
   const handleQrCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) setQrCode(e.target.files[0]);
-  };
-  const handleRemoveQrCode = () => setQrCode(null);
-  const handleRemoveExistingQrCode = () => {
-    setProperty((prev) => {
-      if (!prev) return null;
-      return { ...prev, qrCode: undefined };
-    });
   };
   const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) setPdf(e.target.files[0]);
   };
-  const handleRemovePdf = () => setPdf(null);
-  const handleRemoveExistingPdf = () => {
-    setProperty((prev) => {
-      if (!prev) return null;
-      return { ...prev, pdf: undefined };
-    });
+
+  // Update handleRemoveImage to support removing existing images
+  const handleRemoveExistingImage = (idx: number) => {
+    setRemovedImageIndexes(prev => [...prev, idx]);
   };
 
-  // Cloudinary upload helpers
-  const uploadImagesToCloudinary = async (files: File[], resourceType = "image") => {
-    const urls: string[] = [];
-    for (const file of files) {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "edprop_unsigned");
-      formData.append("cloud_name", "djoe6vb5c");
-      const url = resourceType === "raw"
-        ? "https://api.cloudinary.com/v1_1/djoe6vb5c/raw/upload"
-        : "https://api.cloudinary.com/v1_1/djoe6vb5c/image/upload";
-      const res = await fetch(url, { method: "POST", body: formData });
-      const data = await res.json();
-      if (data.secure_url) urls.push(data.secure_url);
+  // Remove QR code
+  const handleRemoveExistingQrCode = () => {
+    setRemoveQrCode(true);
+  };
+
+  // Remove PDF
+  const handleRemoveExistingPdf = () => {
+    setRemovePdf(true);
+  };
+
+  // Upload images to Cloudinary
+  const uploadImagesToCloudinary = async (files: File[], resourceType: "image" | "raw" = "image") => {
+    const formData = new FormData();
+    files.forEach(file => formData.append("file", file));
+    formData.append("upload_preset", "ml_default");
+    formData.append("resource_type", resourceType);
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to upload images");
     }
-    return urls;
+
+    const data = await response.json();
+    return [data.secure_url];
   };
 
   // Submit
@@ -153,7 +165,12 @@ export default function EditOffPlanProperty() {
     if (!dldPermit) { setError("DLD Permit Number is required."); setLoading(false); return; }
     if (!area) { setError("Square Feet is required."); setLoading(false); return; }
     if (!zoneName) { setError("Zone Name is required."); setLoading(false); return; }
-    // Upload images
+    if (!masterDeveloper) { setError("Master Developer is required."); setLoading(false); return; }
+    if (!handoverDate) { setError("Handover Date is required."); setLoading(false); return; }
+    if (!installment1) { setError("Installment 1 is required."); setLoading(false); return; }
+    if (!installment2) { setError("Installment 2 is required."); setLoading(false); return; }
+
+    // Upload new images
     let imageUrls: string[] = [];
     let qrCodeUrl = property?.qrCode || "";
     let pdfUrl = property?.pdf || "";
@@ -172,8 +189,12 @@ export default function EditOffPlanProperty() {
       setLoading(false);
       return;
     }
-    // Merge with existing images
-    const allImages = [...(property?.images || []), ...imageUrls];
+    // Filter out removed images from property.images
+    const existingImages = (property?.images || []).filter((_, idx) => !removedImageIndexes.includes(idx));
+    const allImages = [...existingImages, ...imageUrls];
+    // Handle QR code and PDF removal
+    if (removeQrCode) qrCodeUrl = "";
+    if (removePdf) pdfUrl = "";
     // Build data
     const data = {
       title: projectName,
@@ -189,6 +210,10 @@ export default function EditOffPlanProperty() {
       qrCode: qrCodeUrl,
       images: allImages,
       pdf: pdfUrl,
+      installment1,
+      installment2,
+      handoverDate,
+      masterDeveloper,
     };
     try {
       const res = await fetch(`/api/properties/${id}`, {
@@ -230,25 +255,53 @@ export default function EditOffPlanProperty() {
               <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="number" value={price} onChange={e => setPrice(e.target.value)} required />
             </div>
             <div>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Installment 1</label>
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={installment1} onChange={e => setInstallment1(e.target.value)} required placeholder="e.g., 10% on booking" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Installment 2</label>
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={installment2} onChange={e => setInstallment2(e.target.value)} required placeholder="e.g., 90% on handover" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Handover Date</label>
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={handoverDate} onChange={e => setHandoverDate(e.target.value)} required placeholder="e.g., Q4 2024" />
+            </div>
+            <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Square Feet</label>
               <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="number" value={area} onChange={e => setArea(e.target.value)} required />
+            </div>
+          </div>
+        </div>
+
+        {/* Developer Information */}
+        <div className="bg-white rounded-lg p-8 shadow">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Developer Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Master Developer</label>
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={masterDeveloper} onChange={e => setMasterDeveloper(e.target.value)} required />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Project Name</label>
               <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={projectName} onChange={e => setProjectName(e.target.value)} required />
             </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-900 mb-1">Location Details</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={locationDetails} onChange={e => setLocationDetails(e.target.value)} required />
-            </div>
           </div>
         </div>
+
         {/* About Project */}
         <div className="bg-white rounded-lg p-8 shadow">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">About Project</h2>
           <label className="block text-sm font-medium text-gray-900 mb-1">Project Description</label>
           <textarea className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" rows={4} value={description} onChange={e => setDescription(e.target.value)} required />
         </div>
+
+        {/* Location */}
+        <div className="bg-white rounded-lg p-8 shadow">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Location</h2>
+          <label className="block text-sm font-medium text-gray-900 mb-1">Location Details</label>
+          <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={locationDetails} onChange={e => setLocationDetails(e.target.value)} required />
+        </div>
+
         {/* Regulatory Information */}
         <div className="bg-white rounded-lg p-8 shadow">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Regulatory Information</h2>
@@ -266,115 +319,91 @@ export default function EditOffPlanProperty() {
               <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={zoneName} onChange={e => setZoneName(e.target.value)} required />
             </div>
           </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-900 mb-1">QR Code</label>
-            <div className="border-2 border-dashed border-gray-300 rounded-md p-4 flex flex-col items-center justify-center cursor-pointer">
-              <input type="file" id="qrCode" accept="image/*" className="hidden" onChange={handleQrCodeChange} />
-              <label htmlFor="qrCode" className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
-                <span className="text-gray-400 text-sm">Drag and drop QR code image here, or click to select</span>
-              </label>
+        </div>
+
+        {/* Images */}
+        <div className="bg-white rounded-lg p-8 shadow">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Images</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Property Images</label>
+              <input type="file" accept="image/*" multiple onChange={handleImagesChange} className="mt-1 block w-full" />
             </div>
-            {/* Existing QR Code Preview */}
-            {property.qrCode && !qrCode && (
-              <div className="relative w-24 h-24 mt-4 border rounded overflow-hidden group">
-                <Image
-                  src={property.qrCode}
-                  alt="QR Code"
-                  width={96}
-                  height={96}
-                  className="object-cover w-full h-full"
-                />
-                <button type="button" onClick={handleRemoveExistingQrCode} className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible" title="Remove QR code">&times;</button>
+            {images.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {images.map((img, idx) => (
+                  <div key={idx} className="relative">
+                    <img src={URL.createObjectURL(img)} alt={`Preview ${idx + 1}`} className="w-full h-32 object-cover rounded" />
+                    <button type="button" onClick={() => handleRemoveImage(idx)} className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
-            {/* New QR Code Preview */}
-            {qrCode && (
-              <div className="relative w-24 h-24 mt-4 border rounded overflow-hidden group">
-                <Image
-                  src={URL.createObjectURL(qrCode)}
-                  alt={qrCode.name}
-                  width={96}
-                  height={96}
-                  className="object-cover w-full h-full"
-                />
-                <button type="button" onClick={handleRemoveQrCode} className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible" title="Remove QR code">&times;</button>
+            {property.images && property.images.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {property.images.map((img, idx) =>
+                  removedImageIndexes.includes(idx) ? null : (
+                    <div key={idx} className="relative">
+                      <img src={img} alt={`Existing ${idx + 1}`} className="w-full h-32 object-cover rounded" />
+                      <button type="button" onClick={() => handleRemoveExistingImage(idx)} className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  )
+                )}
               </div>
             )}
           </div>
         </div>
-        {/* Property Images */}
+
+        {/* QR Code */}
         <div className="bg-white rounded-lg p-8 shadow">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Property Images</h2>
-          {/* Existing Images */}
-          {property.images && property.images.length > 0 && (
-            <div className="flex flex-wrap gap-4 mb-4">
-              {property.images.map((img, idx) => (
-                <div key={idx} className="relative w-24 h-24 border rounded overflow-hidden group">
-                  <Image
-                    src={img}
-                    alt={`Property ${idx + 1}`}
-                    width={96}
-                    height={96}
-                    className="object-cover w-full h-full"
-                  />
-                  <button type="button" onClick={() => handleRemoveExistingImage(img)} className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible" title="Remove image">&times;</button>
-                </div>
-              ))}
-            </div>
-          )}
-          {/* New Images Upload */}
-          <div className="border-2 border-dashed border-gray-300 rounded-md p-4 flex flex-col items-center justify-center cursor-pointer">
-            <input type="file" id="images" accept="image/*" multiple className="hidden" onChange={handleImagesChange} />
-            <label htmlFor="images" className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
-              <span className="text-gray-400 text-sm">Drag and drop property images here, or click to select</span>
-            </label>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">QR Code</h2>
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-1">QR Code Image</label>
+            <input type="file" accept="image/*" onChange={handleQrCodeChange} className="mt-1 block w-full" />
+            {property.qrCode && !removeQrCode && (
+              <div className="mt-4 relative w-32 h-32">
+                <img src={property.qrCode} alt="Existing QR Code" className="object-contain w-full h-full" />
+                <button type="button" onClick={handleRemoveExistingQrCode} className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
-          {/* New Image Previews */}
-          {images.length > 0 && (
-            <div className="flex flex-wrap gap-4 mt-4">
-              {images.map((img, idx) => (
-                <div key={idx} className="relative w-24 h-24 border rounded overflow-hidden group">
-                  <Image
-                    src={URL.createObjectURL(img)}
-                    alt={img.name}
-                    width={96}
-                    height={96}
-                    className="object-cover w-full h-full"
-                  />
-                  <button type="button" onClick={() => handleRemoveImage(idx)} className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-gray-700 hover:bg-red-500 hover:text-white transition-colors shadow group-hover:visible" title="Remove image">&times;</button>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
-        {/* PDF Upload */}
+
+        {/* PDF */}
         <div className="bg-white rounded-lg p-8 shadow">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Project Brochure (PDF)</h2>
-          <div className="border-2 border-dashed border-gray-300 rounded-md p-4 flex flex-col items-center justify-center cursor-pointer mb-4">
-            <input type="file" id="pdf" accept="application/pdf" className="hidden" onChange={handlePdfChange} />
-            <label htmlFor="pdf" className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
-              <span className="text-gray-400 text-sm">Drag and drop PDF here, or click to select</span>
-            </label>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">PDF</h2>
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-1">Property PDF</label>
+            <input type="file" accept=".pdf" onChange={handlePdfChange} className="mt-1 block w-full" />
+            {property.pdf && !removePdf && (
+              <div className="mt-4 flex items-center gap-2">
+                <a href={property.pdf} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">View existing PDF</a>
+                <button type="button" onClick={handleRemoveExistingPdf} className="bg-red-500 text-white p-1 rounded-full">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
-          {/* Existing PDF */}
-          {property.pdf && !pdf && (
-            <div className="flex items-center gap-2 mt-2">
-              <a href={property.pdf} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm">View PDF</a>
-              <button type="button" onClick={handleRemoveExistingPdf} className="text-red-500 hover:underline text-xs">Remove</button>
-            </div>
-          )}
-          {/* New PDF */}
-          {pdf && (
-            <div className="flex items-center gap-2 mt-2">
-              <span className="text-gray-700 text-sm">{pdf.name}</span>
-              <button type="button" onClick={handleRemovePdf} className="text-red-500 hover:underline text-xs">Remove</button>
-            </div>
-          )}
         </div>
+
         {/* Submit Button */}
         <div className="flex justify-end">
-          <button type="submit" disabled={loading} className="rounded-full bg-black text-white px-8 py-2 font-semibold text-lg shadow hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50">
-            {loading ? "Saving..." : "Update Property"}
+          <button type="submit" disabled={loading} className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50">
+            {loading ? "Updating Property..." : "Update Property"}
           </button>
         </div>
       </form>

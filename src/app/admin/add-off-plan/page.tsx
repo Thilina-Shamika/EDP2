@@ -91,6 +91,10 @@ export default function AddOffPlan() {
     if (!dldPermit) { setError("DLD Permit Number is required."); setLoading(false); return; }
     if (!area) { setError("Square Feet is required."); setLoading(false); return; }
     if (!zoneName) { setError("Zone Name is required."); setLoading(false); return; }
+    if (!masterDeveloper) { setError("Master Developer is required."); setLoading(false); return; }
+    if (!handoverDate) { setError("Handover Date is required."); setLoading(false); return; }
+    if (!installment1) { setError("Installment 1 is required."); setLoading(false); return; }
+    if (!installment2) { setError("Installment 2 is required."); setLoading(false); return; }
     // Upload images
     let imageUrls: string[] = [];
     let qrCodeUrl = "";
@@ -131,6 +135,11 @@ export default function AddOffPlan() {
       qrCode: qrCodeUrl,
       images: imageUrls,
       pdf: pdfUrl || "",
+      installment1,
+      installment2,
+      handoverDate,
+      masterDeveloper,
+      beds: beds || undefined
     };
     console.log('Submitting property data:', data);
     try {
@@ -175,15 +184,15 @@ export default function AddOffPlan() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Installment 1</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={installment1} onChange={e => setInstallment1(e.target.value)} />
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={installment1} onChange={e => setInstallment1(e.target.value)} required placeholder="e.g., 10% on booking" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Installment 2</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={installment2} onChange={e => setInstallment2(e.target.value)} />
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={installment2} onChange={e => setInstallment2(e.target.value)} required placeholder="e.g., 90% on handover" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Handover Date</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" placeholder="e.g., Q4 2025" value={handoverDate} onChange={e => setHandoverDate(e.target.value)} />
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={handoverDate} onChange={e => setHandoverDate(e.target.value)} required placeholder="e.g., Q4 2024" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Square Feet</label>
@@ -197,7 +206,7 @@ export default function AddOffPlan() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Master Developer</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={masterDeveloper} onChange={e => setMasterDeveloper(e.target.value)} />
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={masterDeveloper} onChange={e => setMasterDeveloper(e.target.value)} required />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Project Name</label>
