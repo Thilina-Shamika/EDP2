@@ -3,10 +3,10 @@ import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 
 const HomeFormSchema = new mongoose.Schema({
-  fullName: String,
+  name: String,
   phone: String,
   email: String,
-  purpose: String,
+  type: String,
   message: String,
 }, { timestamps: true, collection: 'homeforms' });
 
@@ -16,11 +16,13 @@ export async function POST(request: Request) {
   try {
     await connectDB();
     const body = await request.json();
-    const { fullName, phone, email, purpose, message } = body;
-    if (!fullName || !phone || !email || !purpose) {
+    const { name, phone, email, type, message } = body;
+    
+    if (!name || !phone || !email || !type) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
-    const submission = await HomeFormSubmission.create({ fullName, phone, email, purpose, message });
+    
+    const submission = await HomeFormSubmission.create({ name, phone, email, type, message });
     return NextResponse.json({ success: true, submission });
   } catch (error) {
     console.error('Error saving home form submission:', error);
