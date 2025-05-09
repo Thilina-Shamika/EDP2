@@ -18,6 +18,7 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/api/blogs/:path*",
-    "/api/properties/:path*"
+    "/api/properties/:path*/edit",
+    "/api/properties/:path*/delete"
   ],
 }; 

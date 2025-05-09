@@ -92,11 +92,6 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-    }
-
     await connectDB();
 
     const { searchParams } = new URL(req.url);
