@@ -8,25 +8,69 @@ interface Blog {
   _id: string;
   title: string;
   image: string;
+  excerpt?: string;
+  authorName?: string;
+  createdAt?: string;
 }
 
 const MediaCenter = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
+        console.log('MediaCenter - Fetching blogs...');
         const response = await fetch('/api/blogs?limit=6', {
-          cache: 'no-store',
+          headers: {
+            'Accept': 'application/json',
+          },
+          cache: 'no-store'
         });
+
+        console.log('MediaCenter - Response status:', response.status);
         if (!response.ok) {
-          throw new Error('Failed to fetch blogs');
+          const errorText = await response.text();
+          console.error('MediaCenter - Error response:', errorText);
+          throw new Error(`Failed to fetch blogs: ${response.status}`);
         }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          console.error('MediaCenter - Invalid content type:', contentType);
+          throw new Error('Invalid response format from server');
+        }
+
         const data = await response.json();
-        setBlogs(data);
+        console.log('MediaCenter - Received data:', data);
+        
+        if (!Array.isArray(data)) {
+          console.error('MediaCenter - Invalid data format:', data);
+          throw new Error('Invalid response format from server');
+        }
+
+        // Validate each blog object
+        const validBlogs = data.filter(blog => {
+          const isValid = blog && 
+            typeof blog._id === 'string' && 
+            typeof blog.title === 'string' && 
+            typeof blog.image === 'string';
+          
+          if (!isValid) {
+            console.error('MediaCenter - Invalid blog object:', blog);
+          }
+          return isValid;
+        });
+
+        if (validBlogs.length === 0) {
+          console.log('MediaCenter - No valid blogs found');
+        }
+
+        setBlogs(validBlogs);
       } catch (error) {
-        console.error('Error fetching blogs:', error);
+        console.error('MediaCenter - Error fetching blogs:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load blogs');
       } finally {
         setLoading(false);
       }
@@ -64,6 +108,10 @@ const MediaCenter = () => {
               <div className="flex justify-center items-center h-[400px]">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
               </div>
+            ) : error ? (
+              <div className="text-red-500 text-center">{error}</div>
+            ) : blogs.length === 0 ? (
+              <div className="text-gray-600 text-center">No blog posts found</div>
             ) : (
               <>
                 {/* Row 1 */}

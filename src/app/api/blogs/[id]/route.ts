@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const id = url.pathname.split("/").pop();
   try {
     await dbConnect();
-    const blog = await Blog.findById(id);
+    const blog = await Blog.findOne({ _id: id, published: true });
     if (!blog) {
       return NextResponse.json({ message: "Blog not found" }, { status: 404 });
     }

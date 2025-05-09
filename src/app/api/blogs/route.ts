@@ -89,21 +89,79 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    await connectDB();
+    console.log('GET /api/blogs - Starting request');
+    
+    // Check MongoDB URI
+    if (!process.env.MONGODB_URI) {
+      console.error('MONGODB_URI is not defined');
+      return NextResponse.json(
+        { error: 'Database configuration error' },
+        { status: 500 }
+      );
+    }
 
+    // Connect to database
+    try {
+      await connectDB();
+      console.log('GET /api/blogs - Database connected');
+    } catch (dbError) {
+      console.error('Database connection error:', dbError);
+      return NextResponse.json(
+        { error: 'Database connection failed' },
+        { status: 500 }
+      );
+    }
+
+    // Get query parameters
     const { searchParams } = new URL(req.url);
-    const published = searchParams.get('published');
-    const query = published ? { published: published === 'true' } : {};
+    const limit = searchParams.get('limit');
+    console.log('GET /api/blogs - Query params:', { limit });
+    
+    // Find published blogs
+    try {
+      // First check if the Blog model exists
+      if (!mongoose.models.Blog) {
+        console.error('Blog model not found');
+        return NextResponse.json(
+          { error: 'Blog model not found' },
+          { status: 500 }
+        );
+      }
 
-    const blogs = await Blog.find(query)
-      .sort({ createdAt: -1 })
-      .populate('author', 'name email');
+      const blogs = await Blog.find({ published: true })
+        .sort({ createdAt: -1 })
+        .limit(limit ? Number(limit) : 0)
+        .select('_id title image excerpt authorName createdAt')
+        .lean();
       
-    return NextResponse.json(blogs);
-  } catch (error: unknown) {
-    console.error('Error fetching blogs:', error);
+      console.log('GET /api/blogs - Found blogs:', blogs.length);
+      
+      // Validate the response data
+      if (!Array.isArray(blogs)) {
+        console.error('Invalid blogs data:', blogs);
+        return NextResponse.json(
+          { error: 'Invalid data format' },
+          { status: 500 }
+        );
+      }
+
+      // Return blogs as JSON
+      return NextResponse.json(blogs, {
+        headers: {
+          'Cache-Control': 'no-store'
+        }
+      });
+    } catch (queryError) {
+      console.error('Query error:', queryError);
+      return NextResponse.json(
+        { error: 'Failed to fetch blogs' },
+        { status: 500 }
+      );
+    }
+  } catch (error) {
+    console.error('Unexpected error:', error);
     return NextResponse.json(
-      { message: 'Internal server error', error: error instanceof Error ? error.message : String(error) },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
