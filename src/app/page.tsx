@@ -6,13 +6,13 @@ import LatestLaunches from '@/components/shared/LatestLaunches';
 import FullWidthSection from '@/components/shared/FullWidthSection';
 import Counter from '@/components/shared/Counter';
 import MediaCenter from '@/components/shared/MediaCenter';
-import Footer from '@/components/shared/Footer';
-import HomeForm from '@/components/shared/HomeForm';
+import HomeFormClientWrapper from '@/components/shared/HomeFormClientWrapper';
+import FooterClientWrapper from '@/components/shared/FooterClientWrapper';
 
 export default function Home() {
   return (
     <>
-      <Header />
+      <Header transparent={true} />
       <Hero />
       <PremiumProjects />
       <Mortgage />
@@ -20,8 +20,8 @@ export default function Home() {
       <FullWidthSection />
       <Counter />
       <MediaCenter />
-      <HomeForm />
-      <Footer />
+      <HomeFormClientWrapper />
+      <FooterClientWrapper />
     </>
   );
 }

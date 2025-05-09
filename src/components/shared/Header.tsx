@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const menu = [
   { label: 'BUY', href: '/buy' },
@@ -13,12 +13,30 @@ const menu = [
   { label: 'LIST YOUR PROPERTY', href: '/list-property' },
 ];
 
-export default function Header() {
+interface HeaderProps {
+  transparent?: boolean;
+}
+
+export default function Header({ transparent = false }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const getHeaderBackground = () => {
+    if (!transparent) return 'bg-[#393e46]';
+    return scrolled ? 'bg-[#393e46]/70 backdrop-blur-md' : 'bg-transparent';
+  };
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-50 bg-gradient-to-b  backdrop-blur-md">
+      <header className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${getHeaderBackground()}`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-2 md:px-8">
           {/* Left: Logo */}
           <Link href="/" className="flex items-center gap-2 z-50">
@@ -30,7 +48,6 @@ export default function Header() {
               className="h-10 w-auto"
               priority
             />
-           
           </Link>
 
           {/* Desktop Menu */}
@@ -71,7 +88,7 @@ export default function Header() {
           {/* Overlay */}
           <div className="fixed inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
           {/* Flyout */}
-          <div className="fixed right-0 top-0 h-full w-64 bg-[#22686b] p-6 flex flex-col">
+          <div className="fixed right-0 top-0 h-full w-64 bg-[#393e46] p-6 flex flex-col">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
                 <Image
