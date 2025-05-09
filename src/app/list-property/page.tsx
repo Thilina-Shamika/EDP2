@@ -62,7 +62,7 @@ export default function ListPropertyPage() {
             <div className="mb-8">
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Book a Valuation</h1>
               <p className="text-gray-600">
-                Ready to make your move? Start with a free property valuation. It's quick, easy, and informative.
+                Ready to make your move? Start with a free property valuation. It&apos;s quick, easy, and informative.
               </p>
             </div>
 

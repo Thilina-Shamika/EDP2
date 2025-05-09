@@ -60,12 +60,7 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Detailed error in mortgage approval submission:', {
-      error,
-      message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined
-    });
-    
+    console.error('Detailed error in mortgage approval submission:', error);
     return NextResponse.json(
       { 
         error: 'Failed to save form submission',
@@ -81,7 +76,7 @@ export async function GET() {
     await connectDB();
     const approvals = await MortgageApproval.find({}).sort({ createdAt: -1 });
     return NextResponse.json(approvals);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch mortgage approvals' }, { status: 500 });
   }
 }
@@ -99,7 +94,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Mortgage approval not found' }, { status: 404 });
     }
     return NextResponse.json({ message: 'Mortgage approval deleted successfully' });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to delete mortgage approval' }, { status: 500 });
   }
 } 

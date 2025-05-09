@@ -1,20 +1,9 @@
-// @ts-nocheck
 "use client";
 
 import { useState, useEffect } from 'react';
-// @ts-ignore: No types for this package
-import { E164Number } from 'libphonenumber-js/types';
-import Link from 'next/link';
 import Image from 'next/image';
-// @ts-ignore: No types for this package
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
-// @ts-ignore: No types for this package
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
-import { ShowerHead } from 'lucide-react';
-// @ts-ignore: No types for this package
-import { toast } from 'react-hot-toast';
 import { useParams } from 'next/navigation';
 import Header from '@/components/shared/Header';
 import FooterClientWrapper from '@/components/shared/FooterClientWrapper';
@@ -58,17 +47,10 @@ export default function BuyPropertyClient() {
   const [error, setError] = useState<string | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [phone, setPhone] = useState<E164Number | undefined>(undefined);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    projectName: '',
-  });
 
   useEffect(() => {
     if (!id) return;
     fetchProperty();
-    // eslint-disable-next-line
   }, [id]);
 
   const fetchProperty = async () => {
@@ -83,60 +65,6 @@ export default function BuyPropertyClient() {
       setError(error instanceof Error ? error.message : 'Failed to fetch property');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('/api/inquiries', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone,
-          projectName: formData.projectName,
-          propertyId: id,
-          propertyType: 'buy',
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit inquiry');
-      }
-
-      setFormData({
-        name: '',
-        email: '',
-        projectName: '',
-      });
-      setPhone(undefined);
-
-      toast.success(
-        `Thank you for your interest in ${property?.name || 'this property'}! We will contact you shortly.`,
-        {
-          duration: 5000,
-          style: {
-            background: '#333',
-            color: '#fff',
-            padding: '16px',
-            borderRadius: '8px',
-          },
-        },
-      );
-    } catch (error) {
-      toast.error('Failed to register your interest. Please try again.');
     }
   };
 

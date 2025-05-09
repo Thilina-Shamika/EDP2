@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from 'next/image';
 
@@ -20,8 +20,8 @@ interface Blog {
   authorName?: string;
 }
 
-export default function EditBlog({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function EditBlog() {
+  const { id } = useParams();
   const router = useRouter();
   const { data: session } = useSession();
   const [blog, setBlog] = useState<Blog | null>(null);

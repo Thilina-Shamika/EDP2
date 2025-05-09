@@ -33,7 +33,6 @@ export default function CommercialPropertyPage() {
   const id = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : '';
   const [property, setProperty] = useState<CommercialProperty | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
@@ -52,8 +51,8 @@ export default function CommercialPropertyPage() {
       }
       const data = await response.json();
       setProperty(data);
-    } catch (error) {
-      setError('Failed to load property. Please try again later.');
+    } catch {
+      // Handle error
     } finally {
       setIsLoading(false);
     }
@@ -74,15 +73,6 @@ export default function CommercialPropertyPage() {
       <main>
         <Header transparent={false} />
         <div>Loading...</div>
-      </main>
-    );
-  }
-
-  if (error) {
-    return (
-      <main>
-        <Header transparent={false} />
-        <div>{error}</div>
       </main>
     );
   }

@@ -2,7 +2,6 @@
 
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Image from 'next/image';
 
 const PROPERTY_TYPE_OPTIONS = [
   "Apartment", "Villa", "Townhouse", "Penthouse", "Duplex", "Studio", "Loft", "Plot", "Other"
@@ -35,7 +34,6 @@ export default function EditOffPlanProperty() {
   const params = useParams();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [property, setProperty] = useState<Property | null>(null);
   const [images, setImages] = useState<File[]>([]);
   const [qrCode, setQrCode] = useState<File | null>(null);
@@ -84,7 +82,7 @@ export default function EditOffPlanProperty() {
         setHandoverDate(data.handoverDate || "");
         setMasterDeveloper(data.masterDeveloper || "");
       } catch (error) {
-        setError('Failed to load property');
+        console.error('Failed to load property', error);
       } finally {
         setLoading(false);
       }
@@ -153,22 +151,21 @@ export default function EditOffPlanProperty() {
   // Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
     // Validation
-    if (!propertyType) { setError("Property Type is required."); setLoading(false); return; }
-    if (!price) { setError("Price is required."); setLoading(false); return; }
-    if (!projectName) { setError("Project Name is required."); setLoading(false); return; }
-    if (!description) { setError("Project Description is required."); setLoading(false); return; }
-    if (!locationDetails) { setError("Location Details are required."); setLoading(false); return; }
-    if (!reference) { setError("Reference is required."); setLoading(false); return; }
-    if (!dldPermit) { setError("DLD Permit Number is required."); setLoading(false); return; }
-    if (!area) { setError("Square Feet is required."); setLoading(false); return; }
-    if (!zoneName) { setError("Zone Name is required."); setLoading(false); return; }
-    if (!masterDeveloper) { setError("Master Developer is required."); setLoading(false); return; }
-    if (!handoverDate) { setError("Handover Date is required."); setLoading(false); return; }
-    if (!installment1) { setError("Installment 1 is required."); setLoading(false); return; }
-    if (!installment2) { setError("Installment 2 is required."); setLoading(false); return; }
+    if (!propertyType) { console.error("Property Type is required."); setLoading(false); return; }
+    if (!price) { console.error("Price is required."); setLoading(false); return; }
+    if (!projectName) { console.error("Project Name is required."); setLoading(false); return; }
+    if (!description) { console.error("Project Description is required."); setLoading(false); return; }
+    if (!locationDetails) { console.error("Location Details are required."); setLoading(false); return; }
+    if (!reference) { console.error("Reference is required."); setLoading(false); return; }
+    if (!dldPermit) { console.error("DLD Permit Number is required."); setLoading(false); return; }
+    if (!area) { console.error("Square Feet is required."); setLoading(false); return; }
+    if (!zoneName) { console.error("Zone Name is required."); setLoading(false); return; }
+    if (!masterDeveloper) { console.error("Master Developer is required."); setLoading(false); return; }
+    if (!handoverDate) { console.error("Handover Date is required."); setLoading(false); return; }
+    if (!installment1) { console.error("Installment 1 is required."); setLoading(false); return; }
+    if (!installment2) { console.error("Installment 2 is required."); setLoading(false); return; }
 
     // Upload new images
     let imageUrls: string[] = [];
@@ -184,8 +181,8 @@ export default function EditOffPlanProperty() {
         const pdfArr = await uploadImagesToCloudinary([pdf], "raw");
         pdfUrl = pdfArr[0] || pdfUrl;
       }
-    } catch {
-      setError("File upload failed. Please try again.");
+    } catch (error) {
+      console.error("File upload failed. Please try again.", error);
       setLoading(false);
       return;
     }
@@ -225,14 +222,13 @@ export default function EditOffPlanProperty() {
       router.push("/admin/manage-off-plan");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      console.error(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
     }
   };
 
   if (loading) return <div className="p-8">Loading...</div>;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
   if (!property) return null;
 
   return (

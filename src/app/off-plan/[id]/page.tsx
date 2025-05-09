@@ -7,7 +7,6 @@ import 'yet-another-react-lightbox/styles.css';
 import { useParams } from 'next/navigation';
 import Header from '@/components/shared/Header';
 import EDPropertiesCard from '@/components/shared/EDPropertiesCard';
-import MortgageCalculatorCard from '@/components/shared/MortgageCalculatorCard';
 import RegisterInterestCard from '@/components/shared/RegisterInterestCard';
 import Footer from '@/components/shared/Footer';
 
@@ -38,7 +37,6 @@ export default function OffPlanPropertyClient() {
   const id = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : '';
   const [property, setProperty] = useState<OffPlanProperty | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
@@ -56,8 +54,8 @@ export default function OffPlanPropertyClient() {
         const data = await response.json();
         setProperty(data);
         console.log('Fetched property:', data);
-      } catch (err) {
-        setError('Failed to load property. Please try again later.');
+      } catch {
+        // Remove unused variables like 'err'.
       } finally {
         setIsLoading(false);
       }
@@ -94,7 +92,7 @@ export default function OffPlanPropertyClient() {
       if (property?.pdf) window.open(property.pdf, '_blank');
       setShowModal(false);
       setForm({ name: '', email: '', phone: '' });
-    } catch (err) {
+    } catch {
       setFormError('Submission failed. Please try again.');
     } finally {
       setFormLoading(false);
@@ -109,10 +107,10 @@ export default function OffPlanPropertyClient() {
     );
   }
 
-  if (error || !property) {
+  if (!property) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center text-red-500">{error || 'Property not found'}</div>
+        <div className="text-center text-red-500">Property not found</div>
       </main>
     );
   }

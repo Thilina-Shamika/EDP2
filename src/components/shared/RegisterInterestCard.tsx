@@ -43,14 +43,13 @@ export default function RegisterInterestCard({ propertyType = 'buy' }: RegisterI
       });
       
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to submit');
+        throw new Error('Failed to submit');
       }
       
       setFormData({ name: '', email: '', projectName: '' });
       setPhone('');
       toast.success('Thank you for your interest! We will contact you shortly.');
-    } catch (err) {
+    } catch {
       toast.error('Failed to register your interest. Please try again.');
     } finally {
       setLoading(false);
