@@ -10,12 +10,12 @@ interface OffPlanProperty {
   title: string;
   images: string[];
   handoverDate?: string;
-  price: string;
+  minPrice?: number;
+  maxPrice?: number;
   location: string;
   developer: string;
   propertyCategory: string;
   description: string;
-  beds: string;
 }
 
 const PROPERTY_TYPE_OPTIONS = [
@@ -68,10 +68,11 @@ export default function OffPlanPage() {
     }
     // Filter by price range
     if (filters.minPrice !== 'all' || filters.maxPrice !== 'all') {
-      const price = parseInt(property.price.replace(/[^0-9]/g, ''));
       const minPrice = filters.minPrice === 'all' ? 0 : parseInt(filters.minPrice);
       const maxPrice = filters.maxPrice === 'all' ? Infinity : parseInt(filters.maxPrice);
-      if (price < minPrice || price > maxPrice) {
+      const propertyMin = typeof property.minPrice === 'number' ? property.minPrice : 0;
+      const propertyMax = typeof property.maxPrice === 'number' ? property.maxPrice : Infinity;
+      if (propertyMin < minPrice || propertyMax > maxPrice) {
         return false;
       }
     }
@@ -194,8 +195,12 @@ export default function OffPlanPage() {
                           <span className="text-sm text-gray-900 ml-2">{property.developer}</span>
                         </div>
                         <div className="flex items-center">
-                          <span className="text-sm text-gray-500">Price:</span>
-                          <span className="text-sm text-gray-900 ml-2">{property.price}</span>
+                          <span className="text-sm text-gray-500">Price Range:</span>
+                          <span className="text-sm text-gray-900 ml-2">
+                            {typeof property.minPrice === 'number' && typeof property.maxPrice === 'number'
+                              ? `${property.minPrice.toLocaleString('en-US', { style: 'currency', currency: 'AED', maximumFractionDigits: 0 })} - ${property.maxPrice.toLocaleString('en-US', { style: 'currency', currency: 'AED', maximumFractionDigits: 0 })}`
+                              : '-'}
+                          </span>
                         </div>
                         {property.handoverDate && (
                           <div className="flex items-center">

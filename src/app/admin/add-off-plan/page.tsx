@@ -12,8 +12,8 @@ export default function AddOffPlan() {
   const router = useRouter();
   // Key Info
   const [propertyType, setPropertyType] = useState("");
-  const [beds, setBeds] = useState("");
-  const [price, setPrice] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [installment1, setInstallment1] = useState("");
   const [installment2, setInstallment2] = useState("");
   const [handoverDate, setHandoverDate] = useState("");
@@ -83,7 +83,8 @@ export default function AddOffPlan() {
     setLoading(true);
     // Validation
     if (!propertyType) { setError("Property Type is required."); setLoading(false); return; }
-    if (!price) { setError("Price is required."); setLoading(false); return; }
+    if (!minPrice) { setError("Min Price is required."); setLoading(false); return; }
+    if (!maxPrice) { setError("Max Price is required."); setLoading(false); return; }
     if (!projectName) { setError("Project Name is required."); setLoading(false); return; }
     if (!description) { setError("Project Description is required."); setLoading(false); return; }
     if (!locationDetails) { setError("Location Details are required."); setLoading(false); return; }
@@ -126,9 +127,10 @@ export default function AddOffPlan() {
       description,
       type: "off-plan",
       propertyCategory: propertyType,
-      price,
+      minPrice: Number(minPrice),
+      maxPrice: Number(maxPrice),
       location: locationDetails,
-      area,
+      area: Number(area),
       reference,
       zoneName,
       dldPermit,
@@ -138,8 +140,7 @@ export default function AddOffPlan() {
       installment1,
       installment2,
       handoverDate,
-      masterDeveloper,
-      beds: beds || undefined
+      masterDeveloper
     };
     console.log('Submitting property data:', data);
     try {
@@ -175,12 +176,12 @@ export default function AddOffPlan() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Number of Beds</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="text" value={beds} onChange={e => setBeds(e.target.value)} />
+              <label className="block text-sm font-medium text-gray-900 mb-1">Min Price (AED)</label>
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="number" value={minPrice} onChange={e => setMinPrice(e.target.value)} required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Price (AED)</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="number" value={price} onChange={e => setPrice(e.target.value)} required />
+              <label className="block text-sm font-medium text-gray-900 mb-1">Max Price (AED)</label>
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="number" value={maxPrice} onChange={e => setMaxPrice(e.target.value)} required />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Installment 1</label>

@@ -82,11 +82,11 @@ export default function AboutUs() {
                   <p className="text-sm text-gray-600 leading-relaxed">
                     Trust and relationships are at the heart of our story. It all started when our founders Abdul Basir Qayumi and Mirwais Janbaz shared a clear vision: put our investors first and build lasting partnerships through genuine understanding of our market.
                     <br /><br />
-                    Since then, we've developed something truly special: a unique combination of skills that makes us different. We've created a team that brings together the best of both worlds - international expertise and strong local knowledge of the UAE. With over 15 years of combined experience and a multilingual team, we guide investment decisions with confidence. Market knowledge matters. Of course it does. But what truly sets us apart? It's the relationships we build. We're not interested in quick deals. Instead, we invest time to understand what matters to you - your dreams, your goals, and your investment aspirations.
+                    Since then, we&#39;ve developed something truly special: a unique combination of skills that makes us different. We&#39;ve created a team that brings together the best of both worlds - international expertise and strong local knowledge of the UAE. With over 15 years of combined experience and a multilingual team, we guide investment decisions with confidence. Market knowledge matters. Of course it does. But what truly sets us apart? It&#39;s the relationships we build. We&#39;re not interested in quick deals. Instead, we invest time to understand what matters to you - your dreams, your goals, and your investment aspirations.
                     <br /><br />
-                    Our track record speaks for itself. Investors return to us because we've become trusted partners in their journey.
+                    Our track record speaks for itself. Investors return to us because we&#39;ve become trusted partners in their journey.
                     <br /><br />
-                    Here's what we believe: when you win, we win.
+                    Here&#39;s what we believe: when you win, we win.
                   </p>
                 </div>
               </div>
@@ -188,9 +188,9 @@ export default function AboutUs() {
               {/* Promise Text */}
               <div className="text-center">
                 <p className="text-gray-600 leading-relaxed">
-                  In the luxury real estate market, trust is everything. That's why we're dedicated to becoming the most trusted name in the UAE's high-end property market. Our distinction is clear: we prioritize building lasting relationships over simply closing deals.
+                  In the luxury real estate market, trust is everything. That&#39;s why we&#39;re dedicated to becoming the most trusted name in the UAE&#39;s high-end property market. Our distinction is clear: we prioritize building lasting relationships over simply closing deals.
                   <br /><br />
-                  When you work with us, you're gaining more than an advisor - you're partnering with a team that's genuinely invested in guiding you through your property journey.
+                  When you work with us, you&#39;re gaining more than an advisor - you&#39;re partnering with a team that&#39;s genuinely invested in guiding you through your property journey.
                 </p>
               </div>
             </div>

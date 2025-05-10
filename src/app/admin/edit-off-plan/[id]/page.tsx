@@ -13,7 +13,8 @@ interface Property {
   description: string;
   type: string;
   propertyCategory?: string;
-  price: number;
+  minPrice: number;
+  maxPrice: number;
   location: string;
   area: number;
   images: string[];
@@ -41,7 +42,8 @@ export default function EditOffPlanProperty() {
 
   // Form fields
   const [propertyType, setPropertyType] = useState("");
-  const [price, setPrice] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [projectName, setProjectName] = useState("");
   const [description, setDescription] = useState("");
   const [locationDetails, setLocationDetails] = useState("");
@@ -69,7 +71,8 @@ export default function EditOffPlanProperty() {
         const data = await response.json();
         setProperty(data);
         setPropertyType(data.propertyCategory || "");
-        setPrice(data.price?.toString() || "");
+        setMinPrice(data.minPrice?.toString() || "");
+        setMaxPrice(data.maxPrice?.toString() || "");
         setProjectName(data.title || "");
         setDescription(data.description || "");
         setLocationDetails(data.location || "");
@@ -154,7 +157,8 @@ export default function EditOffPlanProperty() {
     setLoading(true);
     // Validation
     if (!propertyType) { console.error("Property Type is required."); setLoading(false); return; }
-    if (!price) { console.error("Price is required."); setLoading(false); return; }
+    if (!minPrice) { console.error("Min Price is required."); setLoading(false); return; }
+    if (!maxPrice) { console.error("Max Price is required."); setLoading(false); return; }
     if (!projectName) { console.error("Project Name is required."); setLoading(false); return; }
     if (!description) { console.error("Project Description is required."); setLoading(false); return; }
     if (!locationDetails) { console.error("Location Details are required."); setLoading(false); return; }
@@ -198,9 +202,10 @@ export default function EditOffPlanProperty() {
       description,
       type: "off-plan",
       propertyCategory: propertyType,
-      price,
+      minPrice: Number(minPrice),
+      maxPrice: Number(maxPrice),
       location: locationDetails,
-      area,
+      area: Number(area),
       reference,
       zoneName,
       dldPermit,
@@ -247,8 +252,12 @@ export default function EditOffPlanProperty() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Price (AED)</label>
-              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="number" value={price} onChange={e => setPrice(e.target.value)} required />
+              <label className="block text-sm font-medium text-gray-900 mb-1">Min Price (AED)</label>
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="number" value={minPrice} onChange={e => setMinPrice(e.target.value)} required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Max Price (AED)</label>
+              <input className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-gray-900" type="number" value={maxPrice} onChange={e => setMaxPrice(e.target.value)} required />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Installment 1</label>

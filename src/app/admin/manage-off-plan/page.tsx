@@ -10,11 +10,11 @@ interface Property {
   description: string;
   type: string;
   propertyCategory?: string;
-  price: number;
+  minPrice?: number;
+  maxPrice?: number;
   location: string;
   area: number;
   images: string[];
-  status: string;
   reference?: string;
   zoneName?: string;
   dldPermit?: string;
@@ -79,10 +79,10 @@ export default function ManageOffPlan() {
               <tr className="bg-gray-100 text-left" style={{ color: '#495565' }}>
                 <th className="py-2 px-4">Image</th>
                 <th className="py-2 px-4">Title</th>
-                <th className="py-2 px-4">Price (AED)</th>
+                <th className="py-2 px-4">Min Price (AED)</th>
+                <th className="py-2 px-4">Max Price (AED)</th>
                 <th className="py-2 px-4">Area (sq ft)</th>
                 <th className="py-2 px-4">Location</th>
-                <th className="py-2 px-4">Status</th>
                 <th className="py-2 px-4">Actions</th>
               </tr>
             </thead>
@@ -105,10 +105,10 @@ export default function ManageOffPlan() {
                     )}
                   </td>
                   <td className="py-2 px-4 align-middle">{p.title}</td>
-                  <td className="py-2 px-4 align-middle">{p.price?.toLocaleString()}</td>
+                  <td className="py-2 px-4 align-middle">{p.minPrice?.toLocaleString()}</td>
+                  <td className="py-2 px-4 align-middle">{p.maxPrice?.toLocaleString()}</td>
                   <td className="py-2 px-4 align-middle">{p.area}</td>
                   <td className="py-2 px-4 align-middle">{p.location}</td>
-                  <td className="py-2 px-4 align-middle">{p.status}</td>
                   <td className="py-2 px-4 align-middle flex gap-2 items-center justify-center h-16">
                     <button
                       className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -127,7 +127,7 @@ export default function ManageOffPlan() {
               ))}
               {properties.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="text-center py-6 text-gray-500">
+                  <td colSpan={6} className="text-center py-6 text-gray-500">
                     No properties found.
                   </td>
                 </tr>

@@ -5,7 +5,9 @@ export interface IProperty extends mongoose.Document {
   description: string;
   type: 'buy' | 'commercial' | 'off-plan';
   propertyCategory: string;
-  price: number;
+  price?: number;
+  minPrice?: number;
+  maxPrice?: number;
   location: string;
   bedrooms?: number;
   bathrooms?: number;
@@ -47,7 +49,21 @@ const propertySchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    required: [true, 'Please provide the price'],
+    required: function (this: { type?: string }) {
+      return this.type !== 'off-plan';
+    },
+  },
+  minPrice: {
+    type: Number,
+    required: function (this: { type?: string }) {
+      return this.type === 'off-plan';
+    },
+  },
+  maxPrice: {
+    type: Number,
+    required: function (this: { type?: string }) {
+      return this.type === 'off-plan';
+    },
   },
   location: {
     type: String,

@@ -37,16 +37,19 @@ export async function POST(req: Request) {
       'description',
       'type',
       'propertyCategory',
-      'price',
       'location',
       'area',
       'reference',
       'zoneName',
       'dldPermit'
     ];
-    // Only require furnishing for buy properties
-    if (propertyData.type === 'buy') {
-      requiredFields.push('furnishing');
+    if (propertyData.type === 'off-plan') {
+      requiredFields.push('minPrice', 'maxPrice');
+    } else {
+      requiredFields.push('price');
+      if (propertyData.type === 'buy') {
+        requiredFields.push('furnishing');
+      }
     }
 
     const missingFields = requiredFields.filter(field => !propertyData[field]);

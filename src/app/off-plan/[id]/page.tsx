@@ -14,7 +14,8 @@ interface OffPlanProperty {
   title: string;
   images: string[];
   location: string;
-  price: number;
+  minPrice: number;
+  maxPrice: number;
   propertyCategory: string;
   area: number;
   reference: string;
@@ -270,8 +271,12 @@ export default function OffPlanPropertyClient() {
               <h2 className="text-2xl font-bold mb-6">Key information</h2>
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <p className="text-gray-600 mb-1">Price</p>
-                  <p className="text-xl font-semibold">AED {property.price || '-'}</p>
+                  <p className="text-gray-600 mb-1">Price Range</p>
+                  <p className="text-xl font-semibold">
+                    {property.minPrice && property.maxPrice 
+                      ? `AED ${property.minPrice.toLocaleString()} - ${property.maxPrice.toLocaleString()}`
+                      : '-'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-gray-600 mb-1">Installment 1</p>
