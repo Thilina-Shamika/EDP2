@@ -8,7 +8,6 @@ const menu = [
   { label: 'BUY', href: '/buy' },
   { label: 'COMMERCIAL', href: '/commercial' },
   { label: 'OFF PLAN', href: '/off-plan' },
-  { label: 'COMMUNITIES', href: '/communities' },
   { label: 'MEDIA CENTER', href: '/media-center' },
   { label: 'LIST YOUR PROPERTY', href: '/list-property' },
 ];

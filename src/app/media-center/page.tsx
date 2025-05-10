@@ -45,7 +45,12 @@ export default function MediaCenter() {
       <Header />
       <main className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8">Media Center</h1>
+          <div className="flex flex-col items-center text-center mb-12">
+            <span className="inline-block mt-20 bg-gray-100 text-gray-800 px-4 py-1 rounded-full text-sm font-medium mb-4">
+              Media Center
+            </span>
+            <h1 className="text-4xl font-bold text-gray-900">Our Blogs & Articles</h1>
+          </div>
           
           {loading ? (
             <div className="flex justify-center items-center h-[400px]">
