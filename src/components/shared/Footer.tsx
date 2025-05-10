@@ -85,23 +85,23 @@ const Footer = () => {
               <div className="flex items-start gap-3 text-gray-300">
                 <MapPin className="w-5 h-5 mt-1 flex-shrink-0" />
                 <div className="text-sm">
-                  address line 01,<br />
-                  address line 02,<br />
-                  city,<br />
-                  country
+                608, Al Jawhara Building, <br />
+                Khalid Bin Al Waleed Rd, <br />
+                Al Mankhool, <br />
+                Dubai
                 </div>
               </div>
               <div className="flex items-center gap-3 text-gray-300">
                 <Phone className="w-5 h-5 flex-shrink-0" />
                 <div className="text-sm">
-                  <div>000 000 0000</div>
-                  <div>000 000 0000</div>
+                  <div>+971 58 680 0956</div>
+                  <div>+971 52 599 9948</div>
                 </div>
               </div>
               <div className="flex items-center gap-3 text-gray-300">
                 <Mail className="w-5 h-5 flex-shrink-0" />
                 <div className="text-sm">
-                  info@example.com
+                info@edproperties.ae
                 </div>
               </div>
             </div>
@@ -109,23 +109,21 @@ const Footer = () => {
           <div className="col-span-1">
             <h4 className="text-white text-sm font-medium uppercase mb-4">ABOUT ED PROPERTY</h4>
             <nav className="space-y-2">
-              <Link href="#" className="block text-sm text-gray-300 hover:text-white transition-colors">
+              <Link href="/about-us" className="block text-sm text-gray-300 hover:text-white transition-colors">
                 Who We Are
               </Link>
-              <Link href="#" className="block text-sm text-gray-300 hover:text-white transition-colors">
+              <Link href="/contact" className="block text-sm text-gray-300 hover:text-white transition-colors">
                 Contact Us
               </Link>
-              <Link href="#" className="block text-sm text-gray-300 hover:text-white transition-colors">
-                FAQ
-              </Link>
+              
               <Link href="#" className="block text-sm text-gray-300 hover:text-white transition-colors">
                 Careers
               </Link>
-              <Link href="#" className="block text-sm text-gray-300 hover:text-white transition-colors">
+              <Link href="/media-center" className="block text-sm text-gray-300 hover:text-white transition-colors">
                 Blogs
               </Link>
-              <Link href="#" className="block text-sm text-gray-300 hover:text-white transition-colors">
-                Media Center
+              <Link href="/contact" className="block text-sm text-gray-300 hover:text-white transition-colors">
+                FAQ
               </Link>
             </nav>
           </div>
@@ -138,21 +136,19 @@ const Footer = () => {
               <Link href="/off-plan" className="block text-sm text-gray-300 hover:text-white transition-colors">
                 Off Plan
               </Link>
-              <Link href="#" className="block text-sm text-gray-300 hover:text-white transition-colors">
-                Listed Projects
-              </Link>
-              <Link href="/communities" className="block text-sm text-gray-300 hover:text-white transition-colors">
-                Communities
-              </Link>
+              
+
               <Link href="/media-center" className="block text-sm text-gray-300 hover:text-white transition-colors">
                 Media Center
               </Link>
-              <Link href="#" className="block text-sm text-gray-300 hover:text-white transition-colors">
+
+              <Link href="list-property" className="block text-sm text-gray-300 hover:text-white transition-colors">
+                Listed Projects
+              </Link>
+              <Link href="https://calendly.com/edproperties-info/30min?month=2025-05" className="block text-sm text-gray-300 hover:text-white transition-colors">
                 Schedule a Meeting
               </Link>
-              <Link href="/contact" className="block text-sm text-gray-300 hover:text-white transition-colors">
-                Contact Us
-              </Link>
+              
             </nav>
             
           </div>
