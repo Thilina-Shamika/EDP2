@@ -231,14 +231,34 @@ export default function BuyPropertyClient() {
               <p className="text-gray-500">{property.description}</p>
             </div>
             {/* Location Section */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm mt-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Location</h2>
-              <div className="mb-4 text-gray-700 font-medium">{property.location}</div>
-              {/* TODO: Integrate Google Maps API here using property.location or coordinates from the DB */}
-              <div className="w-full h-56 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
-                Google Map Placeholder
+            <h2 className="text-[22px] font-bold text-[#19335A] mb-3 ml-2 mt-8">Location</h2>
+            <section className="w-full pt-8 rounded-2xl" style={{background: 'url(/images/burdubai.png) center/cover no-repeat'}}>
+              <div className="px-0 pb-8">
+                <div className="max-w-full">
+                  <div className="bg-white rounded-[16px] shadow-lg px-8 py-6 mx-2 md:mx-4 lg:mx-8" style={{minHeight: '90px'}}>
+                    <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-4">
+                      <div className="flex items-center gap-3 md:col-span-6">
+                        <svg className="w-6 h-6 text-[#19335A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <circle cx="12" cy="11" r="3" stroke="#19335A" strokeWidth="2" fill="none" />
+                        </svg>
+                        <span className="text-sm font-semibold text-[#19335A]">{property.location}</span>
+                      </div>
+                      <div className="flex justify-end md:col-span-6">
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.location + ', Dubai, UAE')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-8 py-3 bg-[#19335A] text-white rounded-full font-semibold text-base shadow hover:bg-[#10213a] transition-colors"
+                        >
+                          View on Map
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            </section>
             {/* Indoor Amenities Section */}
             {property.features && property.features.length > 0 && (
               <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm mt-6">

@@ -9,6 +9,7 @@ const menu = [
   { label: 'COMMERCIAL', href: '/commercial' },
   { label: 'OFF PLAN', href: '/off-plan' },
   { label: 'MEDIA CENTER', href: '/media-center' },
+  { label: 'WHO WE ARE', href: '/about-us' },
   { label: 'LIST YOUR PROPERTY', href: '/list-property' },
 ];
 

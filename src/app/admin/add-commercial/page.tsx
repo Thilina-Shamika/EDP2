@@ -19,7 +19,7 @@ export default function AddCommercialProperty() {
   const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      setImages(Array.from(files));
+      setImages(prev => [...prev, ...Array.from(files)]);
     }
   };
   const handleRemoveImage = (idx: number) => {

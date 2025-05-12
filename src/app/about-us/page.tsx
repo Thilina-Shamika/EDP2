@@ -43,8 +43,8 @@ export default function AboutUs() {
           <div className="relative h-full flex items-center justify-center">
             <div className="text-center">
               <span className="inline-block bg-white/10 backdrop-blur-sm text-white px-4 py-1 rounded-full text-sm font-medium mb-4">
-                About Us
-              </span>
+            About Us
+          </span>
               <h1 className="text-4xl md:text-5xl font-bold text-white">Elite Destination Property (EDP)</h1>
             </div>
           </div>
@@ -191,7 +191,7 @@ export default function AboutUs() {
                   In the luxury real estate market, trust is everything. That&#39;s why we&#39;re dedicated to becoming the most trusted name in the UAE&#39;s high-end property market. Our distinction is clear: we prioritize building lasting relationships over simply closing deals.
                   <br /><br />
                   When you work with us, you&#39;re gaining more than an advisor - you&#39;re partnering with a team that&#39;s genuinely invested in guiding you through your property journey.
-                </p>
+        </p>
               </div>
             </div>
           </div>

@@ -26,6 +26,7 @@ const navItems = [
   { name: 'Listed Properties', path: '/admin/listed-properties', icon: FileText },
   { name: 'Mortgage Consulting', path: '/admin/mortgage-consulting', icon: Calculator },
   { name: 'Inquiries', path: '/admin/inquiries', icon: MessageSquare },
+  { name: 'Brochure Requests', path: '/admin/brochure-requests', icon: FileText },
   { name: 'Property Requests', path: '/admin/property-requests', icon: FileText },
   { name: 'Add Blog', path: '/admin/add-blog', icon: FileEdit },
   { name: 'Manage Blog', path: '/admin/manage-blog', icon: FileEdit },

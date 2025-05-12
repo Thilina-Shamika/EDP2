@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import Lightbox from 'yet-another-react-lightbox';
-import 'yet-another-react-lightbox/styles.css';
 import { useParams } from 'next/navigation';
 import Header from '@/components/shared/Header';
 import EDPropertiesCard from '@/components/shared/EDPropertiesCard';
 import RegisterInterestCard from '@/components/shared/RegisterInterestCard';
 import Footer from '@/components/shared/Footer';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
 
 interface OffPlanProperty {
   title: string;
@@ -38,13 +38,14 @@ export default function OffPlanPropertyClient() {
   const id = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : '';
   const [property, setProperty] = useState<OffPlanProperty | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
-  const [photoIndex, setPhotoIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [showInterestModal, setShowInterestModal] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [formError, setFormError] = useState('');
   const [formLoading, setFormLoading] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
 
   useEffect(() => {
     async function fetchProperty() {
@@ -63,8 +64,6 @@ export default function OffPlanPropertyClient() {
     }
     if (id) fetchProperty();
   }, [id]);
-
-  const getAllImages = () => property?.images?.map((src) => ({ src: src || '/placeholder.jpg' })) || [];
 
   // Modal form handlers
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,7 +118,7 @@ export default function OffPlanPropertyClient() {
   return (
     <main className="min-h-screen bg-white">
       <Header transparent={false} />
-      {/* Modal Popup */}
+      {/* Modal Popup for Download Brochure */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
           <div ref={modalRef} className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative animate-fadeIn">
@@ -172,11 +171,26 @@ export default function OffPlanPropertyClient() {
           </div>
         </div>
       )}
-      <div className="container mx-auto px-4 pt-24 pb-16 max-w-[1200px]">
+      {/* Modal Popup for Register Your Interest */}
+      {showInterestModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative animate-fadeIn">
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl"
+              onClick={() => setShowInterestModal(false)}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <RegisterInterestCard propertyType="off-plan" />
+          </div>
+        </div>
+      )}
+      <div className="container mx-auto px-4 pt-24 max-w-[1200px]">
         {/* Back Button */}
         <button
           onClick={() => window.location.href = '/off-plan'}
-          className="text-black cursor-pointer hover:text-black flex items-center mb-8"
+          className="text-black cursor-pointer hover:text-black flex items-center mb-4"
         >
           <svg
             className="w-4 h-4 mr-2"
@@ -193,75 +207,70 @@ export default function OffPlanPropertyClient() {
           </svg>
           Back to Off-Plan Properties
         </button>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left: Texts */}
-          <div className="lg:col-span-6 space-y-6">
-            <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-medium mb-2">Off Plan</span>
-            <h1 className="text-4xl font-bold text-black">{property.title}</h1>
-            <div className="flex items-center text-gray-600 mb-4">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span>{property.location || 'Location not specified'}</span>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button className="px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800 transition-colors text-center font-medium">
-                Register your interest
-              </button>
-              <button
-                className="px-6 py-3 bg-white text-black border-2 border-black rounded-full hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 font-medium"
-                onClick={() => setShowModal(true)}
-                disabled={!property.pdf}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+      </div>
+
+      {/* Full width section with gray background */}
+      <div className="w-full bg-[#dbdbdb] py-0">
+        <div className="container mx-auto px-4 max-w-[1200px]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left: Texts */}
+            <div className="lg:col-span-6 space-y-6">
+              <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-medium mb-2">Off Plan</span>
+              <h1 className="text-4xl font-bold text-black">{property.title}</h1>
+              <div className="flex items-center text-gray-800 mb-4">
+                <svg className="w-5 h-5 mr-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                Download Brochure
-              </button>
-            </div>
-          </div>
-          {/* Right: Gallery */}
-          <div className="lg:col-span-6">
-            <div
-              className="relative h-[500px] w-full rounded-2xl overflow-hidden cursor-pointer"
-              onClick={() => { setPhotoIndex(0); setIsOpen(true); }}
-            >
-              <Image
-                src={property.images?.[0] || '/placeholder.jpg'}
-                alt={property.title || 'Off Plan Property'}
-                fill
-                className="object-cover"
-                priority
-              />
-              <div className="absolute bottom-4 left-4">
+                <span className="text-black">{property.location || 'Location not specified'}</span>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button className="px-6 py-3 bg-black text-white rounded-full hover:bg-gray-900 transition-colors text-center font-medium" onClick={() => setShowInterestModal(true)}>
+                  Register your interest
+                </button>
                 <button
-                  className="px-4 py-2 bg-white rounded-full text-sm font-medium flex items-center gap-2"
-                  onClick={e => { e.stopPropagation(); setPhotoIndex(0); setIsOpen(true); }}
+                  className="px-6 py-3 bg-white text-black border-2 border-black rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 font-medium"
+                  onClick={() => setShowModal(true)}
+                  disabled={!property.pdf}
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
-                  {property.images?.length || 0} photos
+                  Download Brochure
                 </button>
               </div>
             </div>
-            <Lightbox
-              open={isOpen}
-              close={() => setIsOpen(false)}
-              slides={getAllImages()}
-              index={photoIndex}
-              carousel={{ finite: true }}
-              controller={{ closeOnBackdropClick: true }}
-              styles={{
-                container: {
-                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                  backdropFilter: 'blur(10px)',
-                },
-              }}
-            />
+            {/* Right: Gallery */}
+            <div className="lg:col-span-6">
+              <div
+                className="relative h-[500px] w-full rounded-2xl overflow-hidden cursor-pointer"
+                onClick={() => { setPhotoIndex(0); setIsOpen(true); }}
+              >
+                <Image
+                  src={property.images?.[0] || '/placeholder.jpg'}
+                  alt={property.title || 'Off Plan Property'}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+                <div className="absolute bottom-4 left-4">
+                  <button
+                    className="px-4 py-2 bg-white rounded-full text-sm font-medium flex items-center gap-2"
+                    onClick={e => { e.stopPropagation(); setPhotoIndex(0); setIsOpen(true); }}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {property.images?.length || 0} photos
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+
+      <div className="container mx-auto px-4 pb-16 max-w-[1200px]">
         {/* New empty 2-column section below gallery */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-12">
           {/* Left column: 7/12 */}
@@ -280,11 +289,11 @@ export default function OffPlanPropertyClient() {
                 </div>
                 <div>
                   <p className="text-gray-600 mb-1">Installment 1</p>
-                  <p className="text-xl font-semibold">{property.installment1 || '-'}</p>
+                  <p className="text-xl font-semibold">{property.installment1 ? `${property.installment1}%` : '-'}</p>
                 </div>
                 <div>
                   <p className="text-gray-600 mb-1">Installment 2</p>
-                  <p className="text-xl font-semibold">{property.installment2 || '-'}</p>
+                  <p className="text-xl font-semibold">{property.installment2 ? `${property.installment2}%` : '-'}</p>
                 </div>
                 <div>
                   <p className="text-gray-600 mb-1">Handover Date</p>
@@ -324,39 +333,45 @@ export default function OffPlanPropertyClient() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Installment 1 */}
                 <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col items-start">
-                  <div className="bg-gray-50 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
-                    <span className="text-gray-900 font-medium">1</span>
-                  </div>
-                  <div className="text-gray-500 text-sm mb-2">Installment 1</div>
-                  <div className="text-[20px] font-semibold mb-2">{property.installment1 || '-'}</div>
+                  <div className="text-sm font-bold text-gray-900 mb-2">Installment 1</div>
+                  <div className="text-3xl font-extrabold text-black mb-2">{property.installment1 ? `${property.installment1}%` : '-'}</div>
                 </div>
                 {/* Installment 2 */}
                 <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col items-start">
-                  <div className="bg-gray-50 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
-                    <span className="text-gray-900 font-medium">2</span>
-                  </div>
-                  <div className="text-gray-500 text-sm mb-2">Installment 2</div>
-                  <div className="text-[20px] font-semibold mb-2">{property.installment2 || '-'}</div>
+                  <div className="text-sm font-bold text-gray-900 mb-2">Installment 2</div>
+                  <div className="text-3xl font-extrabold text-black mb-2">{property.installment2 ? `${property.installment2}%` : '-'}</div>
                 </div>
               </div>
             </div>
             {/* Location Section */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-8">
-              <h2 className="text-2xl font-bold mb-6">Location</h2>
-              <div className="flex items-start gap-2 mb-6">
-                <svg className="w-5 h-5 mt-1 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <div>
-                  <div className="text-gray-900 font-medium">{property.location}</div>
-                  <div className="text-gray-600">Dubai - United Arab Emirates</div>
+            <h2 className="text-[22px] font-bold text-[#19335A] mb-3 ml-2 mt-8">Location</h2>
+            <section className="w-full pt-8 rounded-2xl" style={{background: 'url(/images/burdubai.png) center/cover no-repeat'}}>
+              <div className="px-0 pb-8">
+                <div className="max-w-full">
+                  <div className="bg-white rounded-[16px] shadow-lg px-8 py-6 mx-2 md:mx-4 lg:mx-8" style={{minHeight: '90px'}}>
+                    <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-4">
+                      <div className="flex items-center gap-3 md:col-span-6">
+                        <svg className="w-6 h-6 text-[#19335A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <circle cx="12" cy="11" r="3" stroke="#19335A" strokeWidth="2" fill="none" />
+                        </svg>
+                        <span className="text-sm font-semibold text-[#19335A]">{property.location}</span>
+                      </div>
+                      <div className="flex justify-end md:col-span-6">
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.location + ', Dubai, UAE')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-8 py-3 bg-[#19335A] text-white rounded-full font-semibold text-base shadow hover:bg-[#10213a] transition-colors"
+                        >
+                          View on Map
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="relative w-full h-[400px] rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
-                <div className="text-gray-400">Map will be configured soon</div>
-              </div>
-            </div>
+            </section>
             {/* Regulatory Information Section */}
             <div className="bg-white rounded-2xl border border-gray-100 p-8">
               <h2 className="text-2xl font-bold mb-6">Regulatory information</h2>
@@ -374,11 +389,12 @@ export default function OffPlanPropertyClient() {
                   </div>
                 </div>
                 {property.qrCode && (
-                  <div className="w-40 h-40">
-                    <img
+                  <div className="w-40 h-40 relative">
+                    <Image
                       src={property.qrCode}
                       alt="Property QR Code"
-                      className="object-contain w-full h-full"
+                      fill
+                      className="object-contain"
                     />
                   </div>
                 )}
@@ -394,6 +410,19 @@ export default function OffPlanPropertyClient() {
         </div>
       </div>
       <Footer />
+      {/* Lightbox for gallery */}
+      <Lightbox
+        open={isOpen}
+        close={() => setIsOpen(false)}
+        slides={property.images?.map((src) => ({ src: src || '/placeholder.jpg' })) || []}
+        index={photoIndex}
+        styles={{
+          container: {
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            backdropFilter: 'blur(10px)',
+          },
+        }}
+      />
     </main>
   );
 } 

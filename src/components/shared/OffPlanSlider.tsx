@@ -24,6 +24,8 @@ interface OffPlanProperty {
   pdf: string;
   createdAt: string;
   updatedAt: string;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 const OffPlanSlider = () => {
@@ -105,7 +107,11 @@ const OffPlanSlider = () => {
                     </div>
                     <div className="flex items-center">
                       <span className="text-sm text-gray-500">Price:</span>
-                      <span className="text-sm text-gray-900 ml-2">{property.price}</span>
+                      <span className="text-sm text-gray-900 ml-2">
+                        {typeof property.minPrice === 'number' && typeof property.maxPrice === 'number'
+                          ? `AED ${property.minPrice.toLocaleString()} - ${property.maxPrice.toLocaleString()}`
+                          : '-'}
+                      </span>
                     </div>
                     <div className="flex items-center">
                       <span className="text-sm text-gray-500">Area:</span>

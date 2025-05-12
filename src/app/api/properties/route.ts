@@ -47,8 +47,8 @@ export async function POST(req: Request) {
       requiredFields.push('minPrice', 'maxPrice');
     } else {
       requiredFields.push('price');
-      if (propertyData.type === 'buy') {
-        requiredFields.push('furnishing');
+    if (propertyData.type === 'buy') {
+      requiredFields.push('furnishing');
       }
     }
 
