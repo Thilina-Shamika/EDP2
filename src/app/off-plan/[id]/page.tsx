@@ -335,11 +335,13 @@ export default function OffPlanPropertyClient() {
                 <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col items-start">
                   <div className="text-sm font-bold text-gray-900 mb-2">Installment 1</div>
                   <div className="text-3xl font-extrabold text-black mb-2">{property.installment1 ? `${property.installment1}%` : '-'}</div>
+                  <div className="text-sm text-gray-600">During Construction</div>
                 </div>
                 {/* Installment 2 */}
                 <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col items-start">
                   <div className="text-sm font-bold text-gray-900 mb-2">Installment 2</div>
                   <div className="text-3xl font-extrabold text-black mb-2">{property.installment2 ? `${property.installment2}%` : '-'}</div>
+                  <div className="text-sm text-gray-600">During Hand Over</div>
                 </div>
               </div>
             </div>
