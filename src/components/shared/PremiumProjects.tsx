@@ -60,7 +60,7 @@ const PremiumProjects = () => {
                 Our Premium Projects
               </h3>
               <h2 className="text-5xl font-bold text-gray-900 mt-3">
-                Premium Properties in Premium Locations
+                Properties in Premium Locations
               </h2>
             </div>
           </div>

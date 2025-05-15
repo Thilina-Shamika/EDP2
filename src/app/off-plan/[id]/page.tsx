@@ -225,7 +225,7 @@ export default function OffPlanPropertyClient() {
                 <span className="text-black">{property.location || 'Location not specified'}</span>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="px-6 py-3 bg-black text-white rounded-full hover:bg-gray-900 transition-colors text-center font-medium" onClick={() => setShowInterestModal(true)}>
+                <button className="px-6 py-3 bg-[#393e46] text-white rounded-full hover:bg-gray-900 transition-colors text-center font-medium" onClick={() => setShowInterestModal(true)}>
                   Register your interest
                 </button>
                 <button

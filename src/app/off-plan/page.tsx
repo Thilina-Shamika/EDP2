@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/shared/Header';
+import FooterClientWrapper from '@/components/shared/FooterClientWrapper';
 
 interface OffPlanProperty {
   _id: string;
@@ -234,7 +235,7 @@ export default function OffPlanPage() {
                           </div>
                         )}
                       </div>
-                      <button className="w-full mt-4 px-6 py-2.5 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors">
+                      <button className="w-full mt-4 px-6 py-2.5 bg-[#393e46] text-white rounded-full hover:bg-gray-800 transition-colors">
                         View Details
                       </button>
                     </div>
@@ -245,6 +246,7 @@ export default function OffPlanPage() {
           )}
         </div>
       </div>
+      <FooterClientWrapper />
     </main>
   );
 } 

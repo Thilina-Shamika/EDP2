@@ -173,7 +173,7 @@ const Hero: FC = () => {
                   </select>
 
                   <button
-                    className="px-8 py-3 bg-[#1b2734] text-white rounded-full font-medium text-sm hover:bg-[#2c3e50] transition-colors"
+                    className="px-8 py-3 bg-[#393e46] text-white rounded-full font-medium text-sm hover:bg-[#2c3e50] transition-colors"
                     onClick={handleSearch}
                   >
                     SEARCH PROPERTIES

@@ -155,7 +155,7 @@ export default function ListPropertyPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-black text-white py-3 px-4 rounded-full hover:bg-gray-800 transition-colors"
+                className="w-full bg-[#393e46] text-white py-3 px-4 rounded-full hover:bg-gray-800 transition-colors"
               >
                 Submit Details
               </button>

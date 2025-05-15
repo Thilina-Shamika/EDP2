@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import useEmblaCarousel from 'embla-carousel-react';
 import Link from 'next/link';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface OffPlanProperty {
   _id: string;
@@ -31,12 +32,14 @@ interface OffPlanProperty {
 const OffPlanSlider = () => {
   const [properties, setProperties] = useState<OffPlanProperty[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const [emblaRef] = useEmblaCarousel({
+  const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
     slidesToScroll: 1,
     dragFree: true
   });
+
+  const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
+  const scrollNext = () => emblaApi && emblaApi.scrollNext();
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -75,7 +78,21 @@ const OffPlanSlider = () => {
   }
 
   return (
-    <div className="mt-16 -mx-4 sm:-mx-6">
+    <div className="mt-16 -mx-4 sm:-mx-6 relative">
+      <button
+        onClick={scrollPrev}
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-md"
+        aria-label="Previous slide"
+      >
+        <ChevronLeft className="w-6 h-6 text-gray-900" />
+      </button>
+      <button
+        onClick={scrollNext}
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-md"
+        aria-label="Next slide"
+      >
+        <ChevronRight className="w-6 h-6 text-gray-900" />
+      </button>
       <div className="overflow-hidden px-4 sm:px-6" ref={emblaRef}>
         <div className="flex gap-4 md:gap-8">
           {properties.map((property) => (
@@ -120,7 +137,7 @@ const OffPlanSlider = () => {
                   </div>
                   <Link 
                     href={`/off-plan/${property._id}`}
-                    className="block w-full mt-4 px-6 py-2.5 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors text-center"
+                    className="block w-full mt-4 px-6 py-2.5 bg-[#393e46] text-white rounded-full hover:bg-gray-800 transition-colors text-center"
                   >
                     View Details
                   </Link>

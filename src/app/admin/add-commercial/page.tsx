@@ -5,7 +5,7 @@ import { useState } from "react";
 import Image from 'next/image';
 
 const PROPERTY_TYPE_OPTIONS = [
-  'Retail', 'Warehouse', 'Industrial', 'Shop', 'Office', 'Restaurant', 'Hotel', 'Mixed Use',
+  'Retail', 'Warehouse', 'Industrial', 'Shop', 'Office', 'Restaurant', 'Hotel', 'Mixed Use', 'Others'
 ];
 
 export default function AddCommercialProperty() {

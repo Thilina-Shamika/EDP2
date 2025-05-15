@@ -14,7 +14,7 @@ const Mortgage = () => {
             <p className="text-sm text-gray-900 mt-4">We know how important it is to get the right financing for your property investment. Our network of experienced mortgage advisors will work closely with you to find the most attractive rates and terms. Just like everything else we do, we keep it straightforward and focused on what matters to you.</p>
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
               <Link href="/mortgage-calculator">
-                <button className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors">
+                <button className="flex items-center gap-2 px-6 py-3 bg-[#393e46] text-white rounded-full hover:bg-gray-800 transition-colors">
                   <Calculator className="w-5 h-5" />
                   Mortgage Calculator
                 </button>

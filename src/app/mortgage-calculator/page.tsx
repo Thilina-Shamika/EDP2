@@ -6,6 +6,7 @@ import Footer from '@/components/shared/Footer';
 import { Toaster, toast } from 'react-hot-toast';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
+import Link from 'next/link';
 
 export default function MortgageCalculatorPage() {
   const [purchasePrice, setPurchasePrice] = useState(200000);
@@ -261,13 +262,16 @@ export default function MortgageCalculatorPage() {
               <div className="flex gap-2">
                 <button 
                   onClick={() => setShowConsultingForm(true)}
-                  className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors text-sm"
+                  className="bg-[#393e46] text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors text-sm"
                 >
                   Start Mortgage Approval
                 </button>
+                <Link href="/contact">
                 <button className="border-2 text-black px-4 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors text-sm">
                   Speak to our team
                 </button>
+                </Link>
+
               </div>
             </div>
           </div>

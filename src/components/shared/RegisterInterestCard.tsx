@@ -128,7 +128,7 @@ export default function RegisterInterestCard({ propertyType = 'buy' }: RegisterI
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-black text-white py-3 px-4 rounded-xl hover:bg-gray-800 transition-colors mt-6 font-medium disabled:opacity-60"
+          className="w-full bg-[#393e46] text-white py-3 px-4 rounded-xl hover:bg-gray-800 transition-colors mt-6 font-medium disabled:opacity-60"
         >
           {loading ? 'Submitting...' : 'Submit Details'}
         </button>

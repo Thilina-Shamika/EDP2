@@ -6,7 +6,7 @@ export default function MortgageCalculatorCard() {
       <h2 className="text-2xl font-bold mb-4 text-gray-900">Need a mortgage?</h2>
       <Link
         href="/mortgage-calculator"
-        className="block w-full bg-black text-white py-3 px-4 rounded-xl hover:bg-gray-800 transition-colors text-center text-base font-medium"
+        className="block w-full bg-[#393e46] text-white py-3 px-4 rounded-xl hover:bg-gray-800 transition-colors text-center text-base font-medium"
       >
         Try Our Calculator
       </Link>

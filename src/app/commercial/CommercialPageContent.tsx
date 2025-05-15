@@ -21,7 +21,7 @@ interface CommercialProperty {
 }
 
 const PROPERTY_TYPE_OPTIONS = [
-  'Retail', 'Warehouse', 'Industrial', 'Shop', 'Office', 'Restaurant', 'Hotel', 'Mixed Use',
+  'Retail', 'Warehouse', 'Industrial', 'Shop', 'Office', 'Restaurant', 'Hotel', 'Mixed Use', 'Others'
 ];
 
 export default function CommercialPageContent() {
@@ -265,7 +265,7 @@ export default function CommercialPageContent() {
                         </div>
                       </div>
 
-                      <button className="w-full mt-4 px-6 py-2.5 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors">
+                      <button className="w-full mt-4 px-6 py-2.5 bg-[#393e46] text-white rounded-full hover:bg-gray-800 transition-colors">
                         View Details
                       </button>
                     </div>

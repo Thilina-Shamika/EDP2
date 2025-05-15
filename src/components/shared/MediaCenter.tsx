@@ -95,7 +95,7 @@ const MediaCenter = () => {
             <div>
               <Link 
                 href="/media-center" 
-                className="inline-block bg-black text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
+                className="inline-block bg-[#393e46] text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
               >
                 Visit Media Center
               </Link>

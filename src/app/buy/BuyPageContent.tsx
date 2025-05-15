@@ -22,7 +22,7 @@ interface BuyProperty {
 }
 
 const PROPERTY_TYPE_OPTIONS = [
-  'Apartment', 'Villa', 'Townhouse', 'Penthouse', 'Duplex', 'Studio', 'Loft',
+  'Apartment', 'Villa', 'Townhouse', 'Penthouse', 'Duplex', 'Studio', 'Loft', 'Others'
 ];
 
 export default function BuyPageContent() {
@@ -287,7 +287,7 @@ export default function BuyPageContent() {
                           Type: {property.propertyCategory}
                         </p>
                       </div>
-                      <button className="w-full bg-black text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors">
+                      <button className="w-full bg-[#393e46] text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors">
                         View Details
                       </button>
                     </div>

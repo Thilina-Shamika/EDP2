@@ -5,7 +5,7 @@ import { useState } from "react";
 import Image from 'next/image';
 
 const PROPERTY_TYPE_OPTIONS = [
-  'Apartment', 'Villa', 'Townhouse', 'Penthouse', 'Duplex', 'Studio', 'Loft',
+  'Apartment', 'Villa', 'Townhouse', 'Penthouse', 'Duplex', 'Studio', 'Loft', 'Others'
 ];
 const FURNISHING_OPTIONS = [
   'Unfurnished', 'Semi-Furnished', 'Furnished',

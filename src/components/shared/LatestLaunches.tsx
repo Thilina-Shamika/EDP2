@@ -1,5 +1,6 @@
 import { Search } from 'lucide-react';
 import OffPlanSlider from './OffPlanSlider';
+import Link from 'next/link';
 
 const LatestLaunches = () => {
   return (
@@ -13,10 +14,12 @@ const LatestLaunches = () => {
 
           {/* Right Column */}
           <div className="rounded-lg flex justify-end">
+            <Link href="/off-plan">
             <button className="flex items-center gap-2 px-6 py-3 border border-gray-900 text-gray-900 rounded-full hover:bg-gray-900 hover:text-white transition-colors">
               <Search className="w-5 h-5" />
               Search Properties
             </button>
+            </Link>
           </div>
         </div>
 
