@@ -42,7 +42,7 @@ const Hero: FC = () => {
           className="object-cover object-top"
           quality={100}
         />
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/60" />
       </div>
 
       {/* Content */}
@@ -54,7 +54,7 @@ const Hero: FC = () => {
               <h1 className="text-3xl md:text-[45px] font-bold leading-tight">
                 Ready to Begin Your <br />Real Estate Journey?
               </h1>
-              <p className="mt-4 text-sm text-white/80 max-w-2xl mx-auto">
+              <p className="mt-4 text-base text-white/80 max-w-2xl mx-auto">
                 Partner with us to explore premium investment opportunities in the UAE&apos;s most sought-after developments. Like every successful partnership we&apos;ve built, your journey with us will be defined by our commitment to excellence and a strong understanding of your investment goals.
               </p>
             </div>

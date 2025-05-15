@@ -194,7 +194,7 @@ export default function CommercialPropertyPage() {
                 {property.propertyCategory}
               </div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                AED {property.price}
+                AED {Number(property.price).toLocaleString()}
               </h1>
               <h2 className="text-[15px] text-gray-600 mb-2">
                 {property.title}
@@ -211,6 +211,13 @@ export default function CommercialPropertyPage() {
                   <span className="text-[15px] text-gray-600">{property.area} sq.ft</span>
                 </div>
               </div>
+            </div>
+            {/* Property Description Section */}
+            <h2 className="text-[22px] font-bold text-[#19335A] mb-3 ml-2 mt-8">Property Description</h2>
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <p className="text-[15px] text-gray-600 whitespace-pre-line">
+                {property.description}
+              </p>
             </div>
             {/* Location Section */}
             <h2 className="text-[22px] font-bold text-[#19335A] mb-3 ml-2 mt-8">Location</h2>

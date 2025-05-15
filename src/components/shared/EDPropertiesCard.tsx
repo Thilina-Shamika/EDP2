@@ -8,15 +8,15 @@ export default function EDPropertiesCard() {
       Have a question, need more information, or just exploring your options? Reach out to ED Properties today. Our team is here to assist you every step of the way.
       </p>
       <div className="flex flex-col sm:flex-row gap-3">
-        <button className="flex items-center justify-center gap-2 bg-black text-white py-3 px-6 rounded-xl hover:bg-gray-800 transition-colors text-base font-medium">
+        <a href="tel:+971586800956" className="flex items-center justify-center gap-2 bg-black text-white py-3 px-6 rounded-xl hover:bg-gray-800 transition-colors text-base font-medium">
           <Phone className="w-5 h-5" /> Call
-        </button>
-        <button className="flex items-center justify-center gap-2 bg-black text-white py-3 px-6 rounded-xl hover:bg-gray-800 transition-colors text-base font-medium">
+        </a>
+        <a href="mailto:info@edproperties.ae" className="flex items-center justify-center gap-2 bg-black text-white py-3 px-6 rounded-xl hover:bg-gray-800 transition-colors text-base font-medium">
           <Mail className="w-5 h-5" /> Email
-        </button>
-        <button className="flex items-center justify-center gap-2 bg-black text-white py-3 px-6 rounded-xl hover:bg-gray-800 transition-colors text-base font-medium">
+        </a>
+        <a href="https://wa.me/971525999948" className="flex items-center justify-center gap-2 bg-black text-white py-3 px-6 rounded-xl hover:bg-gray-800 transition-colors text-base font-medium">
           <MessageCircle className="w-5 h-5" /> Whatsapp
-        </button>
+        </a>
       </div>
     </div>
   );

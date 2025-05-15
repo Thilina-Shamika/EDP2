@@ -124,12 +124,25 @@ export default function OffPlanPage() {
                 onChange={(e) => handleFilterChange('minPrice', e.target.value)}
               >
                 <option value="all">Min Price</option>
-                <option value="0">0 AED</option>
+                <option value="500000">500,000 AED</option>
+                <option value="750000">750,000 AED</option>
                 <option value="1000000">1M AED</option>
                 <option value="2000000">2M AED</option>
                 <option value="3000000">3M AED</option>
                 <option value="4000000">4M AED</option>
                 <option value="5000000">5M AED</option>
+                <option value="6000000">6M AED</option>
+                <option value="7000000">7M AED</option>
+                <option value="8000000">8M AED</option>
+                <option value="9000000">9M AED</option>
+                <option value="10000000">10M AED</option>
+                <option value="25000000">25M AED</option>
+                <option value="30000000">30M AED</option>
+                <option value="40000000">40M AED</option>
+                <option value="50000000">50M AED</option>
+                <option value="60000000">60M AED</option>
+                <option value="70000000">70M AED</option>
+                <option value="80000000">80M AED</option>
               </select>
 
               <select 
@@ -138,13 +151,25 @@ export default function OffPlanPage() {
                 onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
               >
                 <option value="all">Max Price</option>
+                <option value="500000">500,000 AED</option>
+                <option value="750000">750,000 AED</option>
                 <option value="1000000">1M AED</option>
                 <option value="2000000">2M AED</option>
                 <option value="3000000">3M AED</option>
                 <option value="4000000">4M AED</option>
                 <option value="5000000">5M AED</option>
+                <option value="6000000">6M AED</option>
+                <option value="7000000">7M AED</option>
+                <option value="8000000">8M AED</option>
+                <option value="9000000">9M AED</option>
                 <option value="10000000">10M AED</option>
-                <option value="20000000">20M AED</option>
+                <option value="25000000">25M AED</option>
+                <option value="30000000">30M AED</option>
+                <option value="40000000">40M AED</option>
+                <option value="50000000">50M AED</option>
+                <option value="60000000">60M AED</option>
+                <option value="70000000">70M AED</option>
+                <option value="80000000">80M AED</option>
               </select>
             </div>
           </div>

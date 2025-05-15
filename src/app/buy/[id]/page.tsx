@@ -37,6 +37,7 @@ interface BuyProperty {
   };
   propertyCategory: string;
   furnishing?: string;
+  title: string;
 }
 
 export default function BuyPropertyClient() {
@@ -200,15 +201,16 @@ export default function BuyPropertyClient() {
               </div>
               {/* Price */}
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                AED {property.price}
+                AED {Number(property.price).toLocaleString()}
               </h1>
-              {/* Reference and Description */}
+              {/* Property Title */}
               <h2 className="text-[15px] text-gray-600 mb-2">
-                {property.bedrooms} Bedrooms | Great Investment | {property.reference}
+                {property.title}
               </h2>
-              <p className="text-gray-500 mb-6">
-                {property.description}
-              </p>
+              {/* Location Address */}
+              <h2 className="text-[15px] text-gray-600 mb-2">
+                {property.location}
+              </h2>
               {/* Icons Row */}
               <div className="flex items-center gap-8 text-gray-500 text-base">
                 <div className="flex items-center gap-2">
