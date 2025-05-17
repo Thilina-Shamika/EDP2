@@ -28,10 +28,14 @@ export default function ManageBlog() {
 
   const fetchBlogs = async () => {
     try {
-      const res = await fetch("/api/blogs");
+      const res = await fetch("/api/blogs?admin=true");
       if (!res.ok) throw new Error("Failed to fetch blogs");
       const data = await res.json();
-      setBlogs(data);
+      // Ensure published field is always defined
+      setBlogs(data.map((blog: Blog) => ({
+        ...blog,
+        published: blog.published ?? false
+      })));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load blogs");
     } finally {

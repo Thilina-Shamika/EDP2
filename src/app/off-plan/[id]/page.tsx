@@ -321,11 +321,9 @@ export default function OffPlanPropertyClient() {
               </div>
             </div>
             {/* About this Project Section */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-8">
-              <h2 className="text-2xl font-bold mb-6">About this Project</h2>
-              <div className="text-gray-600">
-                <p>{property.description || '-'}</p>
-              </div>
+            <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">About this Project</h2>
+              <p className="text-gray-500 whitespace-pre-line">{property.description}</p>
             </div>
             {/* Payment Plan Section */}
             <div className="bg-white rounded-2xl border border-gray-100 p-8">

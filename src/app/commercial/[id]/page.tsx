@@ -24,7 +24,7 @@ interface CommercialProperty {
   reference: string;
   title: string;
   zoneName: string;
-  dldPermitNumber: string;
+  dldPermit: string;
   qrCode: string;
 }
 
@@ -266,10 +266,8 @@ export default function CommercialPropertyPage() {
                     <div className="text-gray-700">{property.zoneName}</div>
                   </div>
                   <div>
-                    <div className="text-base font-semibold text-[#495565] mb-1">
-                      DLD Permit Number
-                    </div>
-                    <div className="text-gray-700">{property.dldPermitNumber}</div>
+                    <div className="text-gray-600 mb-1">DLD Permit Number</div>
+                    <div className="text-gray-900 font-medium">{property.dldPermit || '-'}</div>
                   </div>
                 </div>
                 {property.qrCode && (

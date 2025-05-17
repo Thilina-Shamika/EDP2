@@ -115,9 +115,10 @@ export async function GET(req: Request) {
     // Get query parameters
     const { searchParams } = new URL(req.url);
     const limit = searchParams.get('limit');
-    console.log('GET /api/blogs - Query params:', { limit });
+    const isAdmin = searchParams.get('admin') === 'true';
+    console.log('GET /api/blogs - Query params:', { limit, isAdmin });
     
-    // Find published blogs
+    // Find blogs
     try {
       // First check if the Blog model exists
       if (!mongoose.models.Blog) {
@@ -128,10 +129,16 @@ export async function GET(req: Request) {
         );
       }
 
-      const blogs = await Blog.find({ published: true })
+      // Build query
+      const query: { published?: boolean } = {};
+      if (!isAdmin) {
+        query.published = true;
+      }
+
+      const blogs = await Blog.find(query)
         .sort({ createdAt: -1 })
         .limit(limit ? Number(limit) : 0)
-        .select('_id title image excerpt authorName createdAt')
+        .select('_id title image excerpt authorName createdAt published')
         .lean();
       
       console.log('GET /api/blogs - Found blogs:', blogs.length);

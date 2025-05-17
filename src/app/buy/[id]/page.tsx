@@ -214,15 +214,28 @@ export default function BuyPropertyClient() {
               {/* Icons Row */}
               <div className="flex items-center gap-8 text-gray-500 text-base">
                 <div className="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-bed-double-icon lucide-bed-double">
+                    <path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/>
+                    <path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/>
+                    <path d="M12 4v6"/>
+                    <path d="M2 18h20"/>
+                  </svg>
                   <span>{property.bedrooms} Beds</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 10V6a5 5 0 00-10 0v4M5 10h14a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2z" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-bath-icon lucide-bath">
+                    <path d="M10 4 8 6"/>
+                    <path d="M17 19v2"/>
+                    <path d="M2 12h20"/>
+                    <path d="M7 19v2"/>
+                    <path d="M9 5 7.621 3.621A2.121 2.121 0 0 0 4 5v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/>
+                  </svg>
                   <span>{property.bathrooms} Baths</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
                   <span>{property.area} sq.ft</span>
                 </div>
               </div>
@@ -230,7 +243,7 @@ export default function BuyPropertyClient() {
             {/* Property Description Section */}
             <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Property Description</h2>
-              <p className="text-gray-500">{property.description}</p>
+              <p className="text-gray-500 whitespace-pre-line">{property.description}</p>
             </div>
             {/* Location Section */}
             <h2 className="text-[22px] font-bold text-[#19335A] mb-3 ml-2 mt-8">Location</h2>

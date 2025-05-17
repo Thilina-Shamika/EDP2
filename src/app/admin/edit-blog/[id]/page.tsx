@@ -199,7 +199,12 @@ export default function EditBlog() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">Featured Image</label>
-              <input type="file" accept="image/*" className="mt-1 block w-full" onChange={e => setFeaturedImage(e.target.files?.[0] || null)} />
+              <div className="border-2 border-dashed border-gray-300 rounded-md p-4 flex flex-col items-center justify-center cursor-pointer">
+                <input type="file" id="featuredImage" accept="image/*" className="hidden" onChange={e => setFeaturedImage(e.target.files?.[0] || null)} />
+                <label htmlFor="featuredImage" className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
+                  <span className="text-gray-400 text-sm">Drag and drop featured image here, or click to select</span>
+                </label>
+              </div>
               {(featuredImage || currentImage) && (
                 <div className="relative w-24 h-24 mt-4 border rounded overflow-hidden group">
                   <Image
