@@ -210,22 +210,22 @@ export default function OffPlanPropertyClient() {
       </div>
 
       {/* Full width section with gray background */}
-      <div className="w-full bg-[#dbdbdb] py-0">
+      <div className="w-full bg-[#393e46] py-0">
         <div className="container mx-auto px-4 max-w-[1200px]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left: Texts */}
             <div className="lg:col-span-6 space-y-6">
               <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-medium mb-2">Off Plan</span>
-              <h1 className="text-4xl font-bold text-black">{property.title}</h1>
+              <h1 className="text-4xl font-bold text-white">{property.title}</h1>
               <div className="flex items-center text-gray-800 mb-4">
-                <svg className="w-5 h-5 mr-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 mr-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span className="text-black">{property.location || 'Location not specified'}</span>
+                <span className="text-white">{property.location || 'Location not specified'}</span>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="px-6 py-3 bg-[#393e46] text-white rounded-full hover:bg-gray-900 transition-colors text-center font-medium" onClick={() => setShowInterestModal(true)}>
+                <button className="px-6 py-3 bg-black text-white rounded-full hover:bg-gray-900 transition-colors text-center font-medium" onClick={() => setShowInterestModal(true)}>
                   Register your interest
                 </button>
                 <button

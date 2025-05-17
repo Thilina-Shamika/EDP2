@@ -90,7 +90,6 @@ export default function ManageCommercial() {
                 <th className="py-2 px-4">Price (AED)</th>
                 <th className="py-2 px-4">Area (sq ft)</th>
                 <th className="py-2 px-4">Location</th>
-                <th className="py-2 px-4">Status</th>
                 <th className="py-2 px-4">Actions</th>
               </tr>
             </thead>
@@ -116,7 +115,6 @@ export default function ManageCommercial() {
                   <td className="py-2 px-4 align-middle">{p.price.toLocaleString()}</td>
                   <td className="py-2 px-4 align-middle">{p.area}</td>
                   <td className="py-2 px-4 align-middle">{p.location}</td>
-                  <td className="py-2 px-4 align-middle">{p.status}</td>
                   <td className="py-2 px-4 align-middle flex gap-2 items-center justify-center h-16">
                     <button
                       className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"

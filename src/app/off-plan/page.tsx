@@ -28,7 +28,7 @@ export default function OffPlanPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState({
     type: 'all',
-    location: 'all',
+    location: '',
     minPrice: 'all',
     maxPrice: 'all'
   });
@@ -63,8 +63,8 @@ export default function OffPlanPage() {
     if (filters.type !== 'all' && property.propertyCategory?.toLowerCase() !== filters.type.toLowerCase()) {
       return false;
     }
-    // Filter by location
-    if (filters.location !== 'all' && property.location.toLowerCase() !== filters.location.toLowerCase()) {
+    // Filter by location search
+    if (filters.location && !property.location.toLowerCase().includes(filters.location.toLowerCase())) {
       return false;
     }
     // Filter by price range
@@ -107,17 +107,13 @@ export default function OffPlanPage() {
                 ))}
               </select>
 
-              <select 
+              <input
+                type="text"
+                placeholder="Search by location..."
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={filters.location}
                 onChange={(e) => handleFilterChange('location', e.target.value)}
-              >
-                <option value="all">All Locations</option>
-                <option value="dubai marina">Dubai Marina</option>
-                <option value="palm jumeirah">Palm Jumeirah</option>
-                <option value="downtown dubai">Downtown Dubai</option>
-                <option value="dubai hills">Dubai Hills</option>
-              </select>
+              />
 
               <select 
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -184,7 +180,7 @@ export default function OffPlanPage() {
             <div className="text-center py-12">
               <p className="text-gray-600 text-lg">No properties match your selected filters</p>
               <button 
-                onClick={() => setFilters({ type: 'all', location: 'all', minPrice: 'all', maxPrice: 'all' })}
+                onClick={() => setFilters({ type: 'all', location: '', minPrice: 'all', maxPrice: 'all' })}
                 className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Reset Filters

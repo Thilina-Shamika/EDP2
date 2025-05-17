@@ -85,7 +85,6 @@ export default function ManageBuy() {
                 <th className="py-2 px-4">Location</th>
                 <th className="py-2 px-4">Beds</th>
                 <th className="py-2 px-4">Baths</th>
-                <th className="py-2 px-4">Status</th>
                 <th className="py-2 px-4">Actions</th>
               </tr>
             </thead>
@@ -111,7 +110,6 @@ export default function ManageBuy() {
                   <td className="py-2 px-4 align-middle">{p.location}</td>
                   <td className="py-2 px-4 align-middle">{p.bedrooms ?? "-"}</td>
                   <td className="py-2 px-4 align-middle">{p.bathrooms ?? "-"}</td>
-                  <td className="py-2 px-4 align-middle">{p.status}</td>
                   <td className="py-2 px-4 align-middle flex gap-2 items-center justify-center h-16">
                     <button
                       className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"

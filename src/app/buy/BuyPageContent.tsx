@@ -32,7 +32,7 @@ export default function BuyPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     type: searchParams.get('type') || 'all',
-    location: searchParams.get('location') || 'all',
+    location: searchParams.get('location') || '',
     minPrice: searchParams.get('minPrice') || 'all',
     maxPrice: searchParams.get('maxPrice') || 'all',
     beds: searchParams.get('beds') || 'all',
@@ -75,10 +75,10 @@ export default function BuyPageContent() {
     ) {
       return false;
     }
-    // Filter by location
+    // Filter by location search
     if (
-      filters.location !== 'all' &&
-      property.location.toLowerCase() !== filters.location.toLowerCase()
+      filters.location &&
+      !property.location.toLowerCase().includes(filters.location.toLowerCase())
     ) {
       return false;
     }
@@ -142,17 +142,15 @@ export default function BuyPageContent() {
                   </option>
                 ))}
               </select>
-              <select
+
+              <input
+                type="text"
+                placeholder="Search by location..."
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={filters.location}
                 onChange={(e) => handleFilterChange('location', e.target.value)}
-              >
-                <option value="all">All Locations</option>
-                <option value="dubai marina">Dubai Marina</option>
-                <option value="palm jumeirah">Palm Jumeirah</option>
-                <option value="downtown dubai">Downtown Dubai</option>
-                <option value="dubai hills">Dubai Hills</option>
-              </select>
+              />
+
               <select
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={filters.minPrice}
@@ -179,6 +177,7 @@ export default function BuyPageContent() {
                 <option value="70000000">70M AED</option>
                 <option value="80000000">80M AED</option>
               </select>
+
               <select
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={filters.maxPrice}
@@ -205,6 +204,7 @@ export default function BuyPageContent() {
                 <option value="70000000">70M AED</option>
                 <option value="80000000">80M AED</option>
               </select>
+
               <select
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={filters.beds}
@@ -235,7 +235,7 @@ export default function BuyPageContent() {
                 onClick={() =>
                   setFilters({
                     type: 'all',
-                    location: 'all',
+                    location: '',
                     minPrice: 'all',
                     maxPrice: 'all',
                     beds: 'all',

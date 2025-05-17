@@ -31,7 +31,7 @@ export default function CommercialPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     type: searchParams.get('type') || 'all',
-    location: searchParams.get('location') || 'all',
+    location: searchParams.get('location') || '',
     minPrice: searchParams.get('minPrice') || 'all',
     maxPrice: searchParams.get('maxPrice') || 'all'
   });
@@ -72,10 +72,10 @@ export default function CommercialPageContent() {
     ) {
       return false;
     }
-    // Filter by location
+    // Filter by location search
     if (
-      filters.location !== 'all' &&
-      property.location.toLowerCase() !== filters.location.toLowerCase()
+      filters.location &&
+      !property.location.toLowerCase().includes(filters.location.toLowerCase())
     ) {
       return false;
     }
@@ -122,17 +122,13 @@ export default function CommercialPageContent() {
                 ))}
               </select>
 
-              <select
+              <input
+                type="text"
+                placeholder="Search by location..."
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={filters.location}
                 onChange={(e) => handleFilterChange('location', e.target.value)}
-              >
-                <option value="all">All Locations</option>
-                <option value="dubai marina">Dubai Marina</option>
-                <option value="business bay">Business Bay</option>
-                <option value="downtown dubai">Downtown Dubai</option>
-                <option value="jumeirah lake towers">Jumeirah Lake Towers</option>
-              </select>
+              />
 
               <select
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -206,7 +202,7 @@ export default function CommercialPageContent() {
                 onClick={() =>
                   setFilters({
                     type: 'all',
-                    location: 'all',
+                    location: '',
                     minPrice: 'all',
                     maxPrice: 'all',
                   })
