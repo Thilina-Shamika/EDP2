@@ -14,7 +14,7 @@ import FooterClientWrapper from '@/components/shared/FooterClientWrapper';
 
 interface CommercialProperty {
   _id: string;
-  name: string;
+  title: string;
   images: string[];
   price: string;
   location: string;
@@ -22,7 +22,6 @@ interface CommercialProperty {
   area: string;
   description: string;
   reference: string;
-  title: string;
   zoneName: string;
   dldPermit: string;
   qrCode: string;
@@ -30,33 +29,37 @@ interface CommercialProperty {
 
 export default function CommercialPropertyPage() {
   const params = useParams();
-  const id = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : '';
+  const slug = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : '';
   const [property, setProperty] = useState<CommercialProperty | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
-  useEffect(() => {
-    if (!id) return;
-    fetchProperty();
-    // eslint-disable-next-line
-  }, [id]);
-
   const fetchProperty = async () => {
     try {
-      setIsLoading(true);
-      const response = await fetch(`/api/properties/${id}`);
+      const response = await fetch(`/api/properties?type=commercial`);
       if (!response.ok) {
-        throw new Error('Failed to fetch property');
+        throw new Error('Failed to fetch properties');
       }
-      const data = await response.json();
-      setProperty(data);
-    } catch {
-      // Handle error
+      const properties = await response.json();
+      const property = properties.find((p: CommercialProperty) => 
+        p.title.toLowerCase().replace(/\s+/g, '-') === slug
+      );
+      if (!property) {
+        throw new Error('Property not found');
+      }
+      setProperty(property);
+    } catch (err) {
+      console.error('Error fetching property:', err);
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!slug) return;
+    fetchProperty();
+  }, [slug, fetchProperty]);
 
   const handleImageClick = (index: number = 0) => {
     setPhotoIndex(index);
@@ -113,7 +116,7 @@ export default function CommercialPropertyPage() {
           >
             <Image
               src={property.images[0] || '/placeholder.jpg'}
-              alt={property.name || 'Commercial Property Image'}
+              alt={property.title || 'Commercial Property Image'}
               fill
               className="object-cover"
               priority
@@ -156,7 +159,7 @@ export default function CommercialPropertyPage() {
               >
                 <Image
                   src={image || '/placeholder.jpg'}
-                  alt={`${property.name || 'Commercial Property'} - Image ${index + 2}`}
+                  alt={`${property.title || 'Commercial Property'} - Image ${index + 2}`}
                   fill
                   className="object-cover"
                 />
@@ -272,10 +275,12 @@ export default function CommercialPropertyPage() {
                 </div>
                 {property.qrCode && (
                   <div className="w-32 h-32 flex-shrink-0 flex items-center justify-center">
-                    <img
+                    <Image
                       src={property.qrCode}
                       alt="Property QR Code"
-                      className="rounded-lg object-contain w-full h-full"
+                      width={128}
+                      height={128}
+                      className="rounded-lg object-contain"
                     />
                   </div>
                 )}

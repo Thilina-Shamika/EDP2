@@ -35,7 +35,7 @@ interface OffPlanProperty {
 
 export default function OffPlanPropertyClient() {
   const params = useParams();
-  const id = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : '';
+  const slug = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : '';
   const [property, setProperty] = useState<OffPlanProperty | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -47,23 +47,32 @@ export default function OffPlanPropertyClient() {
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
-  useEffect(() => {
-    async function fetchProperty() {
-      try {
-        setIsLoading(true);
-        const response = await fetch(`/api/properties/${id}`);
-        if (!response.ok) throw new Error('Failed to fetch property');
-        const data = await response.json();
-        setProperty(data);
-        console.log('Fetched property:', data);
-      } catch {
-        // Remove unused variables like 'err'.
-      } finally {
-        setIsLoading(false);
+  const fetchProperty = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/properties?type=off-plan`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch properties');
       }
+      const properties = await response.json();
+      const property = properties.find((p: OffPlanProperty) => 
+        p.title.toLowerCase().replace(/\s+/g, '-') === slug
+      );
+      if (!property) {
+        throw new Error('Property not found');
+      }
+      setProperty(property);
+    } catch (err) {
+      console.error('Error fetching property:', err);
+    } finally {
+      setIsLoading(false);
     }
-    if (id) fetchProperty();
-  }, [id]);
+  };
+
+  useEffect(() => {
+    if (!slug) return;
+    fetchProperty();
+  }, [slug, fetchProperty]);
 
   // Modal form handlers
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {

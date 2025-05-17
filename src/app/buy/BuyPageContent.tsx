@@ -251,7 +251,7 @@ export default function BuyPageContent() {
               {filteredProperties.map((property) => (
                 <Link
                   key={property._id}
-                  href={`/buy/${property._id}`}
+                  href={`/buy/${encodeURIComponent(property.title.toLowerCase().replace(/\s+/g, '-'))}`}
                   className="group"
                 >
                   <div className="rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">

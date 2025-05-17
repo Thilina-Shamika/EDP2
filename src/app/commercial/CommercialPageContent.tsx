@@ -9,7 +9,7 @@ import FooterClientWrapper from '@/components/shared/FooterClientWrapper';
 
 interface CommercialProperty {
   _id: string;
-  name: string;
+  title: string;
   images: string[];
   price: string;
   location: string;
@@ -217,7 +217,7 @@ export default function CommercialPageContent() {
               {filteredProperties.map((property) => (
                 <Link
                   key={property._id}
-                  href={`/commercial/${property._id}`}
+                  href={`/commercial/${encodeURIComponent(property.title.toLowerCase().replace(/\s+/g, '-'))}`}
                   className="group"
                 >
                   <div className="rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
@@ -225,7 +225,7 @@ export default function CommercialPageContent() {
                     <div className="relative h-[240px] w-full">
                       <Image
                         src={property.images[0] || '/placeholder.jpg'}
-                        alt={property.name || 'Commercial Property Image'}
+                        alt={property.title || 'Commercial Property Image'}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover"
@@ -236,7 +236,7 @@ export default function CommercialPageContent() {
                     {/* Content Container */}
                     <div className="p-4 space-y-3">
                       <h3 className="font-semibold text-lg text-gray-900">
-                        {property.name}
+                        {property.title}
                       </h3>
                       <p className="text-sm text-gray-600">{property.location}</p>
 

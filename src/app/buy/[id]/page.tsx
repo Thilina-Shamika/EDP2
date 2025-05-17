@@ -26,7 +26,7 @@ interface BuyProperty {
   features: string[];
   amenities: string[];
   zoneName: string;
-  dldPermitNumber: string;
+  dldPermit: string;
   qrCode?: string;
   developer?: string;
   completionDate?: string;
@@ -42,32 +42,38 @@ interface BuyProperty {
 
 export default function BuyPropertyClient() {
   const params = useParams();
-  const id = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : '';
+  const slug = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : '';
   const [property, setProperty] = useState<BuyProperty | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  useEffect(() => {
-    if (!id) return;
-    fetchProperty();
-  }, [id]);
-
   const fetchProperty = async () => {
     try {
-      const response = await fetch(`/api/properties/${id}`);
+      const response = await fetch(`/api/properties?type=buy`);
       if (!response.ok) {
-        throw new Error('Failed to fetch property');
+        throw new Error('Failed to fetch properties');
       }
-      const data = await response.json();
-      setProperty(data);
+      const properties = await response.json();
+      const property = properties.find((p: BuyProperty) => 
+        p.title.toLowerCase().replace(/\s+/g, '-') === slug
+      );
+      if (!property) {
+        throw new Error('Property not found');
+      }
+      setProperty(property);
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to fetch property');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!slug) return;
+    fetchProperty();
+  }, [slug, fetchProperty]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -322,15 +328,17 @@ export default function BuyPropertyClient() {
                     <div className="text-base font-semibold text-[#495565] mb-1">
                       DLD Permit Number
                     </div>
-                    <div className="text-gray-700">{property.dldPermitNumber}</div>
+                    <div className="text-gray-700">{property.dldPermit}</div>
                   </div>
                 </div>
                 {property.qrCode && (
                   <div className="w-32 h-32 flex-shrink-0 flex items-center justify-center">
-                    <img
+                    <Image
                       src={property.qrCode}
                       alt="Property QR Code"
-                      className="rounded-lg object-contain w-full h-full"
+                      width={128}
+                      height={128}
+                      className="rounded-lg object-contain"
                     />
                   </div>
                 )}
